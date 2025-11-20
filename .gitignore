@@ -1,0 +1,21 @@
+--- File di Sistema e Cache ---
+
+pycache/
+*.pyc
+.DS_Store
+
+--- Ambienti Virtuali (NON caricare mai questi!) ---
+
+.venv/
+venv/
+env/
+
+--- Sicurezza e Configurazioni (IMPORTANTE) ---
+
+Questo nasconde la tua API Key
+
+.streamlit/secrets.toml
+
+Altri file sensibili
+
+.env
