@@ -48,7 +48,7 @@ if api_key:
                 
                 with st.spinner("Sto analizzando l'oggetto..."):
                     # Carichiamo il modello 
-                    model = genai.GenerativeModel('gemini-2.5-flash-live') 
+                    model = genai.GenerativeModel('models/gemini-2.0-flash')
 
                     # Definiamo il Prompt
                     prompt = """
