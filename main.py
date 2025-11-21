@@ -69,10 +69,10 @@ if api_key:
                 with st.spinner("Sto analizzando l'oggetto..."):
 
                     # CONFIGURAZIONE JSON: Forzare la risposta in formato JSON
-                    generation_config = {"response_format": "application/json"}
+                    generation_config = {"response_mime_type": "application/json"}
                         
                     # Carichiamo il modello 
-                    model = genai.GenerativeModel('models/gemini-2.0-flash')
+                    model = genai.GenerativeModel('models/gemini-2.0-flash', generation_config=generation_config)
 
                     # Definiamo il Prompt
                     prompt = f"""
