@@ -1,6 +1,6 @@
-import streamlit as st
-from PIL import Image
-import google.generativeai as genai  # <--- NUOVO IMPORT
+import streamlit as st    # Streamlit per l'interfaccia web
+from PIL import Image    # Libreria per la gestione delle immagini
+import google.generativeai as genai  # API Google Gemini ("cervello")  
 
 # --- Configurazione della Pagina ---
 st.set_page_config(
@@ -15,6 +15,25 @@ st.markdown("""
 Carica una foto di un rifiuto o scattala direttamente. 
 L'Intelligenza Artificiale ti dirà **cos'è**, **se devi pulirlo** e **in quale bidone va buttato**.
 """)
+
+
+# --- Configurazione Posizione (Menu nel corpo principale) ---
+# Usiamo un expander per non occupare spazio se non serve, ma renderlo visibile nel flusso
+with st.expander("📍 Vuoi trovare l'isola ecologica? **Imposta la tua posizione**"):
+    st.write("Inserisci la tua posizione per ricevere indicazioni personalizzate per lo smaltimento dei rifiuti e per l'isola ecologica più vicina a te.")
+    
+    # Creiamo due colonne per affiancare i campi Città e Regione
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        citta = st.text_input("Città", placeholder="Es. Roma")
+    with col2:
+        regione = st.text_input("Regione", placeholder="Es. Lazio")
+    
+    # Feedback visivo immediato
+    if citta and regione:
+        st.success(f"Posizione salvata: {citta} ({regione})")
+        # In futuro qui genereremo il link a Google Maps
 
 # --- Gestione API Key (Sicurezza) ---
 api_key = None
