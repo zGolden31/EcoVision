@@ -1,25 +1,26 @@
-import streamlit as st    # Streamlit per l'interfaccia web
-from PIL import Image    # Libreria per la gestione delle immagini
-import google.generativeai as genai  # API Google Gemini ("cervello")  
-import json  # Per la gestione dei dati JSON
+import streamlit as st              # Framework per la creazione della web app
+from PIL import Image               # Manipolazione immagini   
+import google.generativeai as genai # API Google Gemini ("cervello")  
+import json                         # Per la gestione dei dati JSON
 
-# --- Configurazione della Pagina ---
+# CONFIGURAZIONE PAGINA
 st.set_page_config(
-    page_title="Assistente Raccolta Differenziata",
-    page_icon="♻️",
-    layout="centered"
-)
+    page_title="Assistente Raccolta Differenziata", # Titolo della pagina
+    page_icon="♻️", # Icona della pagina
+    layout="centered" # Layout centrato, moderno
+) 
 
-# --- Titolo e Introduzione ---
-st.title("♻️ Dove lo butto?")
+# INTESTAZIONE E UI PRINCIPALE
+st.title("♻️ Dove lo butto?") # Titolo principale
 st.markdown("""
 Carica una foto di un rifiuto o scattala direttamente. 
 L'Intelligenza Artificiale ti dirà **cos'è**, **se devi pulirlo** e **in quale bidone va buttato**.
-""")
+""") # Descrizione in markdown
 
 
-# --- Configurazione Posizione (Menu nel corpo principale) ---
-# Usiamo un expander per non occupare spazio se non serve, ma renderlo visibile nel flusso
+# CONFIGURAZIONE CONTESTO UTENTE (GEOLOCALIZZAZIONE)
+# Usiamo un expander per mantenere l'interfaccia pulita.
+#L'utente può scegliere di inserire la propria posizione per avere indicazioni più precise.
 with st.expander("📍 Vuoi trovare l'isola ecologica? **Imposta la tua posizione**"):
     st.write("Inserisci la tua posizione per ricevere indicazioni personalizzate per lo smaltimento dei rifiuti e per l'isola ecologica più vicina a te.")
     
@@ -31,22 +32,25 @@ with st.expander("📍 Vuoi trovare l'isola ecologica? **Imposta la tua posizion
     with col2:
         regione = st.text_input("Regione", placeholder="Es. Lazio")
     
-    # Feedback visivo immediato
+    # Sonferma visiva dell'inserimento
     if citta and regione:
         st.success(f"Posizione salvata: {citta} ({regione})")
         # In futuro qui genereremo il link a Google Maps
 
-# --- Gestione API Key (Sicurezza) ---
+# GESTIONE SICUREZZA E AUTENTICAZIONE API KEY
 api_key = None
 try:
+    # Recupero chiave dai 'secrets' di Streamlit
     if "GOOGLE_API_KEY" in st.secrets:
         api_key = st.secrets["GOOGLE_API_KEY"]
 except Exception as e:
     st.warning("Chiave API non trovata nelle configurazioni segrete.")
+    # Se non trovata, chiediamo all'utente di inserirla manualmente
     api_key = st.text_input("Inserisci manualmente la tua Google API Key:", type="password")
 
-# --- Input Immagine ---
+# ACQUISIZIONE IMMAGINE E LOGICA AI
 if api_key:
+    # Selezione metodo di input (Upload file e Fotocamera)
     option = st.radio("Come vuoi caricare l'immagine?", ("Carica file", "Scatta foto"))
     image_file = None
 
@@ -55,20 +59,20 @@ if api_key:
     else:
         image_file = st.camera_input("Scatta una foto al rifiuto")
 
-    # Anteprima immagine (blocco esistente)
+    # Elaborazione immagine se presente
     if image_file is not None:
         image = Image.open(image_file)
         st.image(image, caption="Immagine caricata", use_container_width=True)
 
-        # --- Logica dell'Applicazione (NUOVA PARTE) ---
+        # Logica del bottone di analisi
         if st.button("Analizza Rifiuto 🔍"):
-            # Configura Gemini
             try:
+                # Configura Gemini
                 genai.configure(api_key=api_key)
                 
                 with st.spinner("Sto analizzando l'oggetto..."):
 
-                    # CONFIGURAZIONE JSON: Forzare la risposta in formato JSON
+                    # Forzare la risposta in formato JSON
                     generation_config = {"response_mime_type": "application/json"}
                         
                     # Carichiamo il modello 
@@ -95,24 +99,28 @@ if api_key:
                      Se l'immagine non è un rifiuto o non è chiara, restituisci "destinazione": "Non identificato".
                     """
 
-                    # Chiamata alle API
+                    # Chiamata alle API e invio del prompt con l'immagine
                     response = model.generate_content([prompt, image])
 
-                     # PARSING: Trasformiamo il testo in un dizionario Python
+                     # PARSING: Trasformiamo il testo JSON in un dizionario Python
                     dati_rifiuto = json.loads(response.text)
 
-                    # VISUALIZZAZIONE DETERMINISTICA
+                    # VISUALIZZAZIONE RISULTATI
                     # Se non è stato identificato
                     if dati_rifiuto["destinazione"] == "Non identificato":
                         st.warning("⚠️ Non sono riuscito a capire di che oggetto si tratta. Prova con una foto più chiara.")
+                    # Oggetto identificato correttamente, mostriamo i dettagli
                     else:
                         st.success("Analisi completata!")
                         st.subheader(f"Oggetto: {dati_rifiuto['oggetto']}")
+                        
                         col1, col2 = st.columns(2)
+                    
+                        # Colonna sinistra: Dettagli tecnici
                         with col1:
                             st.info(f"**Materiale:**\n{dati_rifiuto['materiale']}")
                             st.write(f"**Azione richiesta:**\n{dati_rifiuto['azione']}")
-                        
+                        # Colonna destra: Indicazioni di smaltimento
                         with col2:
                             # Logica colori base
                             # Imposta il colore del box (Giallo, Blu, Verde, Rosso) in base al tipo di rifiuto per richiamare i bidoni reali.
