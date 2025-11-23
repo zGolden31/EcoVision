@@ -1,7 +1,29 @@
 import streamlit as st              # Framework per la creazione della web app
+import pandas as pd  # Aggiungiamo pandas per gestire facilmente i dati
 from PIL import Image               # Manipolazione immagini   
 import google.generativeai as genai # API Google Gemini ("cervello")  
 import json                         # Per la gestione dei dati JSON
+
+@st.cache_data # Cache dei dati per evitare ricaricamenti inutili
+def carica_dati_geografici():
+    '''
+        Scarica e processa il file JSON dei comuni italiani.
+        Restituisce una lista di stringhe formattate: "Comune, Regione, Italy".
+    '''
+    # URL ufficiale o raw github con i comuni italiani aggiornati
+    url_comuni = "https://github.com/NotMatte/JSON-Comuni-Italiani/blob/main/data.json?raw=true"
+    
+    # Leggiamo il JSON direttamente in un DataFrame pandas
+    # 'orient=index': Fondamentale perché il JSON è strutturato come un dizionario
+    # (es. {"AGLIÈ": {dati}, ...}) invece di essere una lista di oggetti.
+    df = pd.read_json(url_comuni, orient='index') 
+
+    # Creazione della stringa di ricerca univoca (Stile Google Maps)
+    # Combiniamo le colonne per ottenere: "NomeCittà, NomeRegione, Italy"
+    lista_comuni = df["comune"]+ ", " + df["regione"] + ", Italy"
+    
+    # Restituiamo la lista ordinata alfabeticamente per facilitare la ricerca
+    return lista_comuni.sort_values().tolist()
 
 # CONFIGURAZIONE PAGINA
 st.set_page_config(
@@ -19,22 +41,23 @@ L'Intelligenza Artificiale ti dirà **cos'è**, **se devi pulirlo** e **in quale
 
 
 # CONFIGURAZIONE CONTESTO UTENTE (GEOLOCALIZZAZIONE)
-# Usiamo un expander per mantenere l'interfaccia pulita.
+# Carichiamo i dati PRIMA di disegnare l'interfaccia
+comuni_italiani = carica_dati_geografici()
+# Usiamo un expander per mantenere l'interfaccia pulita
 #L'utente può scegliere di inserire la propria posizione per avere indicazioni più precise.
 with st.expander("📍 Vuoi trovare l'isola ecologica? **Imposta la tua posizione**"):
     st.write("Inserisci la tua posizione per ricevere indicazioni personalizzate per lo smaltimento dei rifiuti e per l'isola ecologica più vicina a te.")
     
-    # Creiamo due colonne per affiancare i campi Città e Regione
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        citta = st.text_input("Città", placeholder="Es. Roma")
-    with col2:
-        regione = st.text_input("Regione", placeholder="Es. Lazio")
-    
-    # Sonferma visiva dell'inserimento
-    if citta and regione:
-        st.success(f"Posizione salvata: {citta} ({regione})")
+    # Usiamo una sola selectbox a larghezza intera per selezionare il comune
+    citta = st.selectbox(
+        "Cerca la tua città",
+        options=comuni_italiani,
+        index=None,
+        placeholder="Scrivi qui il tuo comune (es. Bari)..."
+    )
+    # Conferma visiva dell'inserimento
+    if citta:
+        st.success(f"Posizione salvata: {citta}")
         # In futuro qui genereremo il link a Google Maps
 
 # GESTIONE SICUREZZA E AUTENTICAZIONE API KEY
