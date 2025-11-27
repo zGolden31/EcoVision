@@ -1,36 +1,11 @@
 import streamlit as st              # Framework per la creazione della web app
-import pandas as pd  # Aggiungiamo pandas per gestire facilmente i dati
 from PIL import Image               # Manipolazione immagini   
-import google.generativeai as genai # API Google Gemini ("cervello")  
-import json                         # Per la gestione dei dati JSON
+import config                       # Configurazioni della pagina
+import geo_loader                   # Funzioni di caricamento dati geografici
+import ai_engine                    # Funzioni di analisi e risposta AI
 
-@st.cache_data # Cache dei dati per evitare ricaricamenti inutili
-def carica_dati_geografici():
-    '''
-        Scarica e processa il file JSON dei comuni italiani.
-        Restituisce una lista di stringhe formattate: "Comune, Regione, Italy".
-    '''
-    # URL ufficiale o raw github con i comuni italiani aggiornati
-    url_comuni = "https://github.com/NotMatte/JSON-Comuni-Italiani/blob/main/data.json?raw=true"
-    
-    # Leggiamo il JSON direttamente in un DataFrame pandas
-    # 'orient=index': Fondamentale perché il JSON è strutturato come un dizionario
-    # (es. {"AGLIÈ": {dati}, ...}) invece di essere una lista di oggetti.
-    df = pd.read_json(url_comuni, orient='index') 
-
-    # Creazione della stringa di ricerca univoca (Stile Google Maps)
-    # Combiniamo le colonne per ottenere: "NomeCittà, NomeRegione, Italy"
-    lista_comuni = df["comune"]+ ", " + df["regione"] + ", Italy"
-    
-    # Restituiamo la lista ordinata alfabeticamente per facilitare la ricerca
-    return lista_comuni.sort_values().tolist()
-
-# CONFIGURAZIONE PAGINA
-st.set_page_config(
-    page_title="Assistente Raccolta Differenziata", # Titolo della pagina
-    page_icon="♻️", # Icona della pagina
-    layout="centered" # Layout centrato, moderno
-) 
+# CONFIFGURAZIONE PAGINA
+    config.configura_pagina()
 
 # INTESTAZIONE E UI PRINCIPALE
 st.title("♻️ Dove lo butto?") # Titolo principale
@@ -39,12 +14,12 @@ Carica una foto di un rifiuto o scattala direttamente.
 L'Intelligenza Artificiale ti dirà **cos'è**, **se devi pulirlo** e **in quale bidone va buttato**.
 """) # Descrizione in markdown
 
-
 # CONFIGURAZIONE CONTESTO UTENTE (GEOLOCALIZZAZIONE)
 # Carichiamo i dati PRIMA di disegnare l'interfaccia
-comuni_italiani = carica_dati_geografici()
+comuni_italiani = geo_loader.carica_dati_geografici()
+
 # Usiamo un expander per mantenere l'interfaccia pulita
-#L'utente può scegliere di inserire la propria posizione per avere indicazioni più precise.
+# L'utente può scegliere di inserire la propria posizione per avere indicazioni più precise.
 with st.expander("📍 Vuoi trovare l'isola ecologica? **Imposta la tua posizione**"):
     st.write("Inserisci la tua posizione per ricevere indicazioni personalizzate per lo smaltimento dei rifiuti e per l'isola ecologica più vicina a te.")
     
@@ -90,49 +65,14 @@ if api_key:
         # Logica del bottone di analisi
         if st.button("Analizza Rifiuto 🔍"):
             try:
-                # Configura Gemini
-                genai.configure(api_key=api_key)
-                
-                with st.spinner("Sto analizzando l'oggetto..."):
-
-                    # Forzare la risposta in formato JSON
-                    generation_config = {"response_mime_type": "application/json"}
-                        
-                    # Carichiamo il modello 
-                    model = genai.GenerativeModel('models/gemini-2.0-flash', generation_config=generation_config)
-
-                    # Definiamo il Prompt
-                    prompt = f"""
-                    Agisci come un esperto di riciclo e raccolta differenziata.
-                    Analizza questa immagine.
-                    Restituisci ESCLUSIVAMENTE un oggetto JSON con i seguenti campi:
-                    - "oggetto": Nome breve dell'oggetto identificato.
-                    - "materiale": Il materiale prevalente (es. Plastica, Vetro, Carta, Poliaccoppiato).
-                    - "destinazione": Dove va buttato (es. Plastica, Carta, Vetro, Umido, Secco, Isola Ecologica).
-                    - "azione": Cosa fare prima di buttarlo (es. "Sciacqua bene", "Schiaccia", "Separa il tappo", "Nessuna azione").
-                    - "note": Una spiegazione brevissima o un consiglio specifico (max 1 frase).
-                    L'utente si trova in {citta}.
-
-                    1. Identifica l'oggetto principale.
-                    2. Controlla se l'oggetto sembra sporco (es. residui di cibo, salsa, liquido).
-                    3. Fornisci istruzioni chiare:
-                        - Se è sporco, dì esplicitamente come pulirlo (es. sciacquare, svuotare).
-                        - Dimmi in quale bidone va gettato (Plastica, Carta, Vetro, Umido/Organico, Secco/Indifferenziato, Metallo).
-                    
-                     Se l'immagine non è un rifiuto o non è chiara, restituisci "destinazione": "Non identificato".
-                    """
-
-                    # Chiamata alle API e invio del prompt con l'immagine
-                    response = model.generate_content([prompt, image])
-
-                     # PARSING: Trasformiamo il testo JSON in un dizionario Python
-                    dati_rifiuto = json.loads(response.text)
+                # Chiamata alla funzione di analisi AI
+                dati_rifiuto = ai_engine.analizza_immagine(image, api_key, citta)
 
                     # VISUALIZZAZIONE RISULTATI
                     # Se non è stato identificato
                     if dati_rifiuto["destinazione"] == "Non identificato":
                         st.warning("⚠️ Non sono riuscito a capire di che oggetto si tratta. Prova con una foto più chiara.")
-                    # Oggetto identificato correttamente, mostriamo i dettagli
+                    # Se l'oggetto è identificato correttamente, mostriamo i dettagli
                     else:
                         st.success("Analisi completata!")
                         st.subheader(f"Oggetto: {dati_rifiuto['oggetto']}")
@@ -164,6 +104,7 @@ if api_key:
                         # Note in basso
                         st.markdown("---")
                         st.caption(f"💡 **Nota dell'esperto:** {dati_rifiuto['note']}")
+
             except Exception as e:
                 st.error(f"Si è verificato un errore: {e}")
 
