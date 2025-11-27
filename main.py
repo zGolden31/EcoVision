@@ -67,6 +67,8 @@ if api_key:
             try:
                 # Chiamata alla funzione di analisi AI
                 dati_rifiuto = ai_engine.analizza_immagine(image, api_key, citta)
+                # Chiamata alla funzione di analisi AI
+                dati_rifiuto = ai_engine.analizza_immagine(image, api_key, citta)
 
                 # VISUALIZZAZIONE RISULTATI
                 # Se non è stato identificato
