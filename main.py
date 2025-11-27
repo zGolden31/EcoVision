@@ -8,7 +8,7 @@ import ai_engine                    # Funzioni di analisi e risposta AI
 config.configura_pagina()
 
 # INTESTAZIONE E UI PRINCIPALE
-st.title("♻️ Dove lo butto?") # Titolo principale
+st.title("♻️ EcoVision: dove si butta?") # Titolo principale
 st.markdown("""
 Carica una foto di un rifiuto o scattala direttamente. 
 L'Intelligenza Artificiale ti dirà **cos'è**, **se devi pulirlo** e **in quale bidone va buttato**.
@@ -65,8 +65,6 @@ if api_key:
         # Logica del bottone di analisi
         if st.button("Analizza Rifiuto 🔍"):
             try:
-                # Chiamata alla funzione di analisi AI
-                dati_rifiuto = ai_engine.analizza_immagine(image, api_key, citta)
                 # Chiamata alla funzione di analisi AI
                 dati_rifiuto = ai_engine.analizza_immagine(image, api_key, citta)
 
