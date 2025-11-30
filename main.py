@@ -62,7 +62,8 @@ if api_key:
     # Elaborazione immagine se presente
     if image_file is not None:
         image = Image.open(image_file)
-        st.image(image, caption="Immagine caricata", use_container_width=True)
+        if option == "Carica file":
+            st.image(image, caption="Immagine caricata", use_container_width=True)
 
         # Logica del bottone di analisi
         if st.button("Analizza Rifiuto 🔍"):
