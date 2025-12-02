@@ -55,7 +55,7 @@ if api_key:
     image_file = None
 
     if option == "Carica file":
-        image_file = st.file_uploader("Scegli un'immagine...", type=["jpg", "jpeg", "png"])
+        image_file = st.file_uploader("Scegli un'immagine...", type=["jpg", "jpeg", "png", "webp"])
     else:
         image_file = st.camera_input("Scatta una foto al rifiuto")
 
