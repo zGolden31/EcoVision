@@ -1,0 +1,156 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" version="29.2.2">
+  <diagram name="Pagina-1" id="ReXDAfgIvvttBJnkaCEO">
+    <mxGraphModel dx="2037" dy="2166" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="m4qeIIpN0ECuYDlP5fHc-12" parent="1" style="html=1;whiteSpace=wrap;" value="" vertex="1">
+          <mxGeometry height="476" width="411" x="-853" y="-1324" as="geometry" />
+        </mxCell>
+        <mxCell id="m4qeIIpN0ECuYDlP5fHc-2" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="ATTORI" vertex="1">
+          <mxGeometry height="200" width="235" x="-1137" y="-1634" as="geometry">
+            <mxRectangle height="26" width="78" x="-1137" y="-1634" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4qeIIpN0ECuYDlP5fHc-3" parent="m4qeIIpN0ECuYDlP5fHc-2" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;rotation=0;" value="&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;&lt;font style=&quot;&quot;&gt;&lt;br&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;&lt;b style=&quot;&quot;&gt;1) USER&lt;/b&gt;&lt;/span&gt;&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; white-space: normal; text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;: è la persona che utilizza l&#39;app e deve gettare il rifiuto. Interagisce con l&#39;interfaccia grafica (bottoni, fotocamera...)&amp;nbsp;&lt;/span&gt;&lt;/font&gt;&lt;/font&gt;&lt;/span&gt;&lt;div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;div style=&quot;&quot;&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;&lt;b style=&quot;&quot;&gt;2) Google Gemini AI:&amp;nbsp;&lt;/b&gt;&lt;span style=&quot;&quot;&gt;è il &quot;cervello&quot; che analizza il rifiuto e gestisce lo smistamento&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;&quot;&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;&quot;&gt;&lt;font style=&quot;font-size: 9px;&quot;&gt;&lt;b style=&quot;&quot;&gt;3) Google Maps:&lt;/b&gt; viene utilizzato quando l&#39;utente clicca sul link per l&#39;isola ecologica e viene reindirizzato sulla pagina di Google Maps&lt;/font&gt;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;&quot;&gt;&lt;span style=&quot;&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;text-align: center;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="159" width="193.5" x="18" y="38" as="geometry" />
+        </mxCell>
+        <mxCell id="m4qeIIpN0ECuYDlP5fHc-5" parent="1" style="swimlane;whiteSpace=wrap;html=1;startSize=23;" value="CASI D&#39;USO" vertex="1">
+          <mxGeometry height="252" width="290" x="-856" y="-1634" as="geometry">
+            <mxRectangle height="26" width="93" x="-852" y="-1634" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4qeIIpN0ECuYDlP5fHc-6" parent="m4qeIIpN0ECuYDlP5fHc-5" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;fontSize=9;" value="&lt;b&gt;UC1 - Geolocalizzazione (Selezione Comune): &lt;/b&gt;l&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&#39;utente seleziona il proprio comune dalla selectbox&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;b&gt;UC2 - Caricamento Immagine: &lt;/b&gt;l&#39;utente può selezionare se caricare un file (file_uploader()) o se scattare una foto (camera_input())&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;b&gt;UC3 - Analisi Rifiuto: &lt;/b&gt;quando l&#39;utente clicca il pulsante&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;b&gt;UC4 - Visualizzazione Risultati: &lt;/b&gt;il&lt;/span&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&amp;nbsp;sistema mostra il nome dell&#39;oggetto, il materiale, le azioni di pulizia e il bidone corretto&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;b&gt;&lt;br&gt;&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;UC5 - Ricerca Isola Ecologica:&amp;nbsp;&lt;/b&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;se il rifiuto va all&#39;isola ecologica o se l&#39;utente espande il menu, può cliccare sul link per cercare il centro di raccolta&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;b style=&quot;&quot;&gt;&lt;font style=&quot;color: light-dark(rgb(255, 15, 0), rgb(255, 255, 255));&quot;&gt;CASO D&#39;USO DA SISTEMARE&lt;/font&gt;&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;font color=&quot;#ff0f00&quot;&gt;&lt;b&gt;UC6-AUTENTICAZIONE (inserimento API Key):&amp;nbsp;&lt;/b&gt;&lt;/font&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Se la chiave non è nei &quot;secrets&quot;, l&#39;utente deve inserirla manualmente nel campo di testo.&lt;/span&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="251" width="273" x="8.5" y="17" as="geometry" />
+        </mxCell>
+        <mxCell id="m4qeIIpN0ECuYDlP5fHc-8" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="Utente" vertex="1">
+          <mxGeometry height="54" width="30" x="-1031" y="-1151" as="geometry" />
+        </mxCell>
+        <mxCell id="m4qeIIpN0ECuYDlP5fHc-10" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="&lt;font size=&quot;1&quot;&gt;Maps&lt;/font&gt;" vertex="1">
+          <mxGeometry height="40" width="21" x="-333" y="-1243" as="geometry" />
+        </mxCell>
+        <mxCell id="m4qeIIpN0ECuYDlP5fHc-11" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" value="AI" vertex="1">
+          <mxGeometry height="40" width="21" x="-494" y="-1086" as="geometry" />
+        </mxCell>
+        <mxCell id="m4qeIIpN0ECuYDlP5fHc-13" parent="1" style="text;align=center;fontStyle=1;verticalAlign=middle;spacingLeft=3;spacingRight=3;strokeColor=none;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;html=1;fontSize=8;" value="Sistema" vertex="1">
+          <mxGeometry height="16" width="51" x="-506" y="-864" as="geometry" />
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-1" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;&lt;b&gt;UC1: Selezione Comune&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="52" width="101" x="-779" y="-1308" as="geometry" />
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-3" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;&lt;b&gt;UC3: Analisi Rifiuto&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="52" width="101" x="-655" y="-916" as="geometry" />
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-4" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;&lt;b&gt;UC2: Caricamento immagine&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="52" width="101" x="-788" y="-1044" as="geometry" />
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-5" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;&lt;b&gt;UC4: Visualizzazione Risultati&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="52" width="101" x="-779" y="-1117" as="geometry" />
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-6" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="&lt;font style=&quot;font-size: 9px;&quot;&gt;&lt;b&gt;UC5: Ricerca Isola Ecologica&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="52" width="101" x="-779" y="-1210" as="geometry" />
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-7" edge="1" parent="1" source="m4qeIIpN0ECuYDlP5fHc-8" style="endArrow=classic;html=1;rounded=0;exitX=0.75;exitY=0.1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="qcWSdCPtaxkbc3eEQNcL-1" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="-718" y="-1052" as="sourcePoint" />
+            <mxPoint x="-668" y="-1102" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-15" connectable="0" parent="qcWSdCPtaxkbc3eEQNcL-7" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="tramite selectbox effettua" vertex="1">
+          <mxGeometry relative="1" x="-0.0127" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-8" edge="1" parent="1" source="m4qeIIpN0ECuYDlP5fHc-8" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="qcWSdCPtaxkbc3eEQNcL-4" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="-718" y="-1052" as="sourcePoint" />
+            <mxPoint x="-668" y="-1102" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-16" connectable="0" parent="qcWSdCPtaxkbc3eEQNcL-8" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="effettua" vertex="1">
+          <mxGeometry relative="1" x="-0.0178" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-9" edge="1" parent="1" source="m4qeIIpN0ECuYDlP5fHc-8" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="qcWSdCPtaxkbc3eEQNcL-3" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="-718" y="-1052" as="sourcePoint" />
+            <mxPoint x="-668" y="-1102" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-17" connectable="0" parent="qcWSdCPtaxkbc3eEQNcL-9" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="richiede" vertex="1">
+          <mxGeometry relative="1" x="-0.0071" y="-1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-11" edge="1" parent="1" source="m4qeIIpN0ECuYDlP5fHc-8" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=1;exitY=0.3333333333333333;exitDx=0;exitDy=0;exitPerimeter=0;" target="qcWSdCPtaxkbc3eEQNcL-6" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="-1000" y="-1095" as="sourcePoint" />
+            <mxPoint x="-668" y="-1102" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-18" connectable="0" parent="qcWSdCPtaxkbc3eEQNcL-11" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="effettua" vertex="1">
+          <mxGeometry relative="1" x="0.0094" as="geometry">
+            <mxPoint y="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-12" edge="1" parent="1" source="qcWSdCPtaxkbc3eEQNcL-5" style="endArrow=classic;html=1;rounded=0;entryX=0.533;entryY=0.676;entryDx=0;entryDy=0;entryPerimeter=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="m4qeIIpN0ECuYDlP5fHc-8" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="-718" y="-1052" as="sourcePoint" />
+            <mxPoint x="-668" y="-1102" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-13" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="ASSOCIAZIONI E RELAZIONI" vertex="1">
+          <mxGeometry height="266" width="338" x="-525" y="-1634" as="geometry">
+            <mxRectangle height="26" width="198" x="-531" y="-1634" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-19" parent="qcWSdCPtaxkbc3eEQNcL-13" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 10px;&quot;&gt;&amp;nbsp;&lt;b style=&quot;&quot;&gt;RELAZIONI DI ASSOCIAZIONE UTENTE-CASO D&#39;USO&amp;nbsp;&lt;/b&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;L&#39;utente avvia seguenti casi d&#39;uso:&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;- UC1: seleziona il comune;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;- UC2: carica l&#39;immagine;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;- UC3: avvia l&#39;analisi;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;-UC5: avvia la ricerca;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;b&gt;RELAZIONI DI INCLUSIONE (un caso d&#39;uso include SEMPRE un altro caso d&#39;uso):&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;b&gt;- &lt;/b&gt;&lt;u&gt;UC3 include UC2&lt;/u&gt;: senza il caricamento dell&#39;immagine non ci può essere l&#39;analisi;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;-&lt;font style=&quot;color: rgb(255, 20, 5);&quot;&gt; UC4 include UC6: cioè l&#39;analisi include la chiamata a Google Gemini&lt;/font&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;font style=&quot;color: rgb(51, 0, 0);&quot;&gt;- &lt;u&gt;UC5 include UC1&lt;/u&gt;: la ricerca dell&#39;isola ecologica non può avvenire se prima non è stato selezionato il comune;&amp;nbsp;il link a Maps viene generato usando il nome della città selezionata&lt;/font&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;font style=&quot;color: rgb(255, 20, 5);&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;br&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="185" width="307" x="15.5" y="79" as="geometry" />
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-21" edge="1" parent="1" source="qcWSdCPtaxkbc3eEQNcL-3" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;" target="qcWSdCPtaxkbc3eEQNcL-4" value="">
+          <mxGeometry relative="1" x="-0.5217" y="-3" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="-608" y="-953" as="sourcePoint" />
+            <mxPoint x="-688" y="-953" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-22" connectable="0" parent="qcWSdCPtaxkbc3eEQNcL-21" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" vertex="1">
+          <mxGeometry relative="1" x="0.0362" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-23" edge="1" parent="1" source="qcWSdCPtaxkbc3eEQNcL-6" style="html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" target="qcWSdCPtaxkbc3eEQNcL-1" value="">
+          <mxGeometry relative="1" x="-0.5217" y="-3" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="-643" y="-1218" as="sourcePoint" />
+            <mxPoint x="-643" y="-1264" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-24" connectable="0" parent="qcWSdCPtaxkbc3eEQNcL-23" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="&amp;lt;&amp;lt;include&amp;gt;&amp;gt;" vertex="1">
+          <mxGeometry relative="1" x="0.0362" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-25" edge="1" parent="1" source="qcWSdCPtaxkbc3eEQNcL-3" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" target="m4qeIIpN0ECuYDlP5fHc-11" value="richiede l&#39;analisi&amp;nbsp;&lt;div&gt;dell&#39;immagine&lt;/div&gt;">
+          <mxGeometry relative="1" width="80" as="geometry">
+            <mxPoint x="-658" y="-1094" as="sourcePoint" />
+            <mxPoint x="-578" y="-1094" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-26" edge="1" parent="1" source="qcWSdCPtaxkbc3eEQNcL-6" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" target="m4qeIIpN0ECuYDlP5fHc-10" value="richiama">
+          <mxGeometry relative="1" width="80" as="geometry">
+            <mxPoint x="-658" y="-1094" as="sourcePoint" />
+            <mxPoint x="-578" y="-1094" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qcWSdCPtaxkbc3eEQNcL-29" edge="1" parent="1" source="qcWSdCPtaxkbc3eEQNcL-3" style="html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;exitX=1;exitY=0;exitDx=0;exitDy=0;" value="mostra">
+          <mxGeometry relative="1" width="80" as="geometry">
+            <mxPoint x="-658" y="-1094" as="sourcePoint" />
+            <mxPoint x="-678" y="-1085" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
