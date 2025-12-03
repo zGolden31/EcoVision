@@ -33,9 +33,30 @@ with st.expander("📍 Vuoi trovare l'isola ecologica? **Imposta la tua posizion
     # Conferma visiva dell'inserimento
     if citta:
         st.success(f"Posizione salvata: {citta}")
-        nome_comune = citta.split(",")[0] # Prendiamo solo il nome del comune
-        url_maps = f"https://www.google.com/maps/search/isola+ecologica+{nome_comune}" # Link a Google Maps per l'isola ecologica
-        st.link_button("🔗 Trova l'isola ecologica più vicina", url_maps, use_container_width=True) #Bottone per aprire Google Maps in un'altra scheda
+        st.write("Ecco l'isola ecologica più vicina a te:")
+        nome_comune = citta.split(",")[0].strip() # Prendiamo solo il nome del comune ; .strip() rimuove eventuali spazi vuoti accidentali)
+        url_maps = f"https://www.google.com/maps?q=isola+ecologica+{nome_comune}&output=embed" # Link a Google Maps per l'isola ecologica
+        
+        # Iframe HTML
+        st.markdown(
+            f'<iframe src="{url_maps}" width="100%" height="350" style="border-radius:20px; border:1px solid #ddd;" allowfullscreen="" loading="lazy"></iframe>',
+            unsafe_allow_html=True
+        )
+        # SPIEGAZIONE DEL CODICE iframe:
+            # f'<iframe '--> Inizio della f-string: serve per inserire variabili Python (come {url_maps}) dentro il testo
+            # f'src="{url_maps}" --> Qui inseriamo dinamicamente l'URL che la finestra deve visualizzare
+            # [width]: LARGHEZZA. "100%" significa "occupa tutto lo spazio orizzontale disponibile".
+            # [height]: ALTEZZA. Fissa l'altezza della mappa a 350 pixel.
+            # [style]: STILE CSS. Serve per abbellire il riquadro.
+            # "border-radius:20px": Arrotonda gli angoli di 20px per un aspetto più morbido.
+            # "border:1px solid #ddd": Crea un bordo sottile grigio chiaro attorno alla mappa.
+            # [allowfullscreen]: Piacere utente. Abilita il pulsante nella mappa per aprirla a tutto schermo.
+            # [loading]: PERFORMANCE. "lazy" (pigro) significa: "Non caricare la mappa finché l'utente 
+            # non scorre la pagina fino a qui". Rende l'avvio dell'app molto più veloce.
+            # '</iframe>' Chiusura del tag iframe
+            # [unsafe_allow_html]: SICUREZZA. 
+            # Di base Streamlit blocca l'HTML per sicurezza. Con "True" forziamo Streamlit 
+            # a fidarsi di noi e a disegnare l'iframe invece di scriverlo come testo.
 
 # GESTIONE SICUREZZA E AUTENTICAZIONE API KEY
 api_key = None
@@ -107,8 +128,13 @@ if api_key:
                             # Grigio
                             st.error(f"🗑️ **Dove buttarlo:**\n## {dati_rifiuto['destinazione'].upper()}")
                     
-                        if dati_rifiuto['destinazione']=="Isola Ecologica":
-                            st.link_button("🔗 Trova l'isola ecologica più vicina", url_maps, use_container_width=True)
+                    if dati_rifiuto['destinazione']=="Isola Ecologica":
+                        st.write("Ecco l'isola ecologica più vicina a te:")
+                        # Iframe HTML
+                        st.markdown(
+                            f'<iframe src="{url_maps}" width="100%" height="350" style="border-radius:20px; border:1px solid #ddd;" allowfullscreen="" loading="lazy"></iframe>',
+                            unsafe_allow_html=True
+                        )
                         
                     # Note in basso
                     st.markdown("---")
