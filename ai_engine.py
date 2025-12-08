@@ -22,16 +22,16 @@ def analizza_immagine(image, api_key, citta):
                 Restituisci ESCLUSIVAMENTE un oggetto JSON con i seguenti campi:
                 - "oggetto": Nome breve dell'oggetto identificato.
                 - "materiale": Il materiale prevalente (es. Plastica, Vetro, Carta, Poliaccoppiato).
-                - "destinazione": Dove va buttato (es. Plastica, Carta, Vetro, Umido, Secco, Isola Ecologica).
+                - "destinazione": Dove va buttato. Scegli SOLO tra questi: ["Plastica", "Carta", "Vetro", "Organico", "Indifferenziato", "Rifiuto Speciale", "Non identificato"].
                 - "azione": Cosa fare prima di buttarlo (es. "Sciacqua bene", "Schiaccia", "Separa il tappo", "Nessuna azione").
                 - "note": Una spiegazione brevissima o un consiglio specifico (max 1 frase).
                 L'utente si trova in {citta}.
 
                 1. Identifica l'oggetto principale.
-                2. Controlla se l'oggetto sembra sporco (es. residui di cibo, salsa, liquido).
-                3. Fornisci istruzioni chiare:
-                    - Se è sporco, dì esplicitamente come pulirlo (es. sciacquare, svuotare).
-                    - Dimmi in quale bidone va gettato (Plastica, Carta, Vetro, Umido/Organico, Secco/Indifferenziato, Metallo).
+                2. Scegli la categoria corretta tra quelle consentite.
+                3. Controlla se l'oggetto sembra sporco (es. residui di cibo, salsa, liquido).
+                4. Fornisci istruzioni chiare:
+                    - Se è sporco, dì esplicitamente come pulirlo.
                     
                 Se l'immagine non è un rifiuto o non è chiara, restituisci "destinazione": "Non identificato".
                 """

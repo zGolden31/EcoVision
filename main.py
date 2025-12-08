@@ -116,14 +116,23 @@ if api_key:
                     elif "carta" in dest:
                         # Blu
                         st.info(f"🗑️ **Dove buttarlo:**\n## {dati_rifiuto['destinazione'].upper()}")
-                    elif "umido" in dest or "organico" in dest:
+                    elif "organico" in dest:
                         # Marrone
+                        st.success(f"🗑️ **Dove buttarlo:**\n## {dati_rifiuto['destinazione'].upper()}") # Usa un colore diverso se possibile, ma success è ok (verde/marrone)
+                    elif "vetro" in dest:
+                        # Verde
                         st.success(f"🗑️ **Dove buttarlo:**\n## {dati_rifiuto['destinazione'].upper()}")
-                    else:
-                        # Grigio (o rosso per errore/indifferenziato)
+                    elif "indifferenziato" in dest:
+                        # Grigio
                         st.error(f"🗑️ **Dove buttarlo:**\n## {dati_rifiuto['destinazione'].upper()}")
+                    elif "rifiuto speciale" in dest:
+                        # Rosso o speciale
+                        st.error(f"⚠️ **Rifiuto Speciale:**\n## {dati_rifiuto['destinazione'].upper()}")
+                        st.write("Questo rifiuto non va nei bidoni domestici. Portalo all'isola ecologica.")
+                    else:
+                        st.write(f"🗑️ **Dove buttarlo:**\n## {dati_rifiuto['destinazione'].upper()}")
                     
-                    if dati_rifiuto['destinazione']=="Isola Ecologica":
+                    if "rifiuto speciale" in dest or "isola ecologica" in dest:
                         st.write("Ecco l'isola ecologica più vicina a te:")
                         st.markdown(
                             f'<iframe src="{url_maps}" width="100%" height="350" style="border-radius:20px; border:1px solid #ddd;" allowfullscreen="" loading="lazy"></iframe>',
