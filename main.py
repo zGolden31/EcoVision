@@ -1,6 +1,6 @@
 import streamlit as st              # Framework per la creazione della web app
 from PIL import Image               # Manipolazione immagini   
-import config                       # Configurazioni della pagina
+import config                    # Configurazioni della pagina
 from geo_loader import carica_dati_geografici, get_city_from_latlon_italian, disattiva_gps, disattiva_selezioneman  # Funzioni di caricamento dati geografici
 import ai_engine                    # Funzioni di analisi e risposta AI
 from streamlit_js_eval import get_geolocation  # Per ottenere la geolocalizzazione dell'utente
@@ -14,6 +14,8 @@ st.markdown("""
 Carica una foto di un rifiuto o scattala direttamente. 
 L'Intelligenza Artificiale ti dirà **cos'è**, **se devi pulirlo** e **in quale bidone va buttato**.
 """) # Descrizione in markdown
+
+config.mostra_legenda_bidoni() # Mostra la legenda dei bidoni
 
 
 # CONFIGURAZIONE CONTESTO UTENTE (GEOLOCALIZZAZIONE)
