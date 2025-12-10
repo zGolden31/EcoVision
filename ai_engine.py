@@ -24,7 +24,7 @@ def analizza_immagine(image, api_key, citta):
                 - "materiale": Il materiale prevalente (es. Plastica, Vetro, Carta, Poliaccoppiato).
                 - "destinazione": indica in che BIDONE va buttato. Scegli SOLO tra questi: ["Plastica", "Carta", "Vetro", "Organico", "Indifferenziato", "Rifiuto Speciale", "Non identificato"].
                 - "azione": Cosa fare prima di buttarlo (es. "Sciacqua bene", "Schiaccia", "Separa il tappo", "Nessuna azione").
-                - "note": Una spiegazione brevissima o un consiglio specifico (max 1 frase).
+                - "note": Una spiegazione brevissima (se presenta più componenti...specificare dove vanno buttate ognuna) o un consiglio specifico (max 1 frase).
                 L'utente si trova in {citta}.
 
                 1. Identifica l'oggetto principale.

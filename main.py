@@ -1,8 +1,9 @@
 import streamlit as st              # Framework per la creazione della web app
 from PIL import Image               # Manipolazione immagini   
 import config                       # Configurazioni della pagina
-import geo_loader                   # Funzioni di caricamento dati geografici
+from geo_loader import carica_dati_geografici, get_city_from_latlon_italian  # Funzioni di caricamento dati geografici
 import ai_engine                    # Funzioni di analisi e risposta AI
+from streamlit_js_eval import get_geolocation  # Per ottenere la geolocalizzazione dell'utente
 
 # CONFIFGURAZIONE PAGINA
 config.configura_pagina()
@@ -14,30 +15,56 @@ Carica una foto di un rifiuto o scattala direttamente.
 L'Intelligenza Artificiale ti dirà **cos'è**, **se devi pulirlo** e **in quale bidone va buttato**.
 """) # Descrizione in markdown
 
+
 # CONFIGURAZIONE CONTESTO UTENTE (GEOLOCALIZZAZIONE)
 # Carichiamo i dati PRIMA di disegnare l'interfaccia
-comuni_italiani = geo_loader.carica_dati_geografici()
+comuni_italiani = carica_dati_geografici()
+citta = None # inizializziamo la variabile città
 
+# 1 GEOLOCALIZZAZIONE AUTOMATICA
+# Creiamo un pulsante per chiedere esplicitamente l'azione all'utente
+if st.checkbox("📍 Usa la mia posizione attuale per trovare l'isola ecologica"):
+    
+    # Questa funzione chiama il browser per il permesso GPS
+    loc = get_geolocation()
+
+    # Se l'utente ha detto SÌ e il browser ha risposto
+    if loc:
+        lat = loc['coords']['latitude']
+        lon = loc['coords']['longitude']
+        citta = get_city_from_latlon_italian(lat, lon)
+    
+        st.success(f"Posizione rilevata! Lat: {lat}, Lon: {lon}, città: {citta}")
+        st.info(f"Se la città non è corretta, puoi impostarla manualmente qui sotto")
+    else:
+        st.warning("In attesa del permesso GPS o segnale debole...")
+else:
+    st.info("Attiva la spunta sopra per localizzarti.")
+
+# 2 GEOLOCALIZZAZIONE MANUALE (priorità sulla automatica)
 # Usiamo un expander per mantenere l'interfaccia pulita
 # L'utente può scegliere di inserire la propria posizione per avere indicazioni più precise.
-with st.expander("📍 Vuoi trovare l'isola ecologica? **Imposta la tua posizione**"):
+with st.expander("📍 Vuoi trovare l'isola ecologica? **Imposta la tua posizione manualmente**"):
     st.write("Inserisci la tua posizione per ricevere indicazioni personalizzate per lo smaltimento dei rifiuti e per l'isola ecologica più vicina a te.")
-    
     # Usiamo una sola selectbox a larghezza intera per selezionare il comune
-    citta = st.selectbox(
+    citta_man = st.selectbox(
         "Cerca la tua città",
         options=comuni_italiani,
         index=None,
         placeholder="Scrivi qui il tuo comune (es. Bari)..."
     )
-    # Conferma visiva dell'inserimento
+
+# Conferma visiva dell'inserimento
+if citta_man:
     if citta:
-        st.success(f"Posizione salvata: {citta}")
-        nome_comune = citta.split(",")[0].strip() # Prendiamo solo il nome del comune ; .strip() rimuove eventuali spazi vuoti accidentali)
-        url_maps_citta = f"https://www.google.com/maps?q={nome_comune}&output=embed" # Link a Google Maps per città selezionata
-        url_maps_isola = f"https://www.google.com/maps?q=isola+ecologica+{nome_comune}&output=embed" # Link a Google Maps per l'isola ecologica
+        st.info(f"Attenzione: hai già una città rilevata automaticamente: {citta}. La città manuale avrà la priorità.")
+        citta = citta_man
+    st.success(f"Posizione salvata: {citta_man}")
+
 
 if citta:    
+    url_maps_citta = f"https://www.google.com/maps?q={citta}&output=embed" # Link a Google Maps per città selezionata
+    url_maps_isola = f"https://www.google.com/maps?q=isola+ecologica+{citta}&output=embed" # Link a Google Maps per l'isola ecologica
     st.write("Ecco la città in cui ti trovi:")    
     # Iframe HTML
     st.markdown(
