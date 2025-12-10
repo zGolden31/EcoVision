@@ -160,20 +160,40 @@ if api_key:
                     dest_text = dati_rifiuto['destinazione'].upper()
                     
                     if "plastica" in dest:
-                        # Giallo
-                        show_custom_box("Dove buttarlo", dest_text, "#FFEB3B", "black", "🗑️")
+                        col_box, col_icon = st.columns([4, 1])
+                        with col_box:
+                            # Giallo
+                            show_custom_box("Dove buttarlo", dest_text, "#FFEB3B", "black", "🗑️")
+                        with col_icon:
+                            st.image("./icons/yellow.png", width=120)
                     elif "carta" in dest:
-                        # Blu
-                        show_custom_box("Dove buttarlo", dest_text, "#2196F3", "white", "🗑️")
+                        col_box, col_icon = st.columns([4, 1])
+                        with col_box:
+                            # Blu
+                            show_custom_box("Dove buttarlo", dest_text, "#2196F3", "white", "🗑️")
+                        with col_icon:
+                            st.image("./icons/blue.png", width=120)
                     elif "organico" in dest or "umido" in dest:
-                        # Marrone
-                        show_custom_box("Dove buttarlo", dest_text, "#795548", "white", "🗑️")
+                        col_box, col_icon = st.columns([4, 1])
+                        with col_box:
+                            # Marrone
+                            show_custom_box("Dove buttarlo", dest_text, "#795548", "white", "🗑️")
+                        with col_icon:
+                            st.image("./icons/brown.png", width=120)
                     elif "vetro" in dest:
-                        # Verde
-                        show_custom_box("Dove buttarlo", dest_text, "#4CAF50", "white", "🗑️")
+                        col_box, col_icon = st.columns([4, 1])
+                        with col_box:
+                            # Verde
+                            show_custom_box("Dove buttarlo", dest_text, "#4CAF50", "white", "🗑️")
+                        with col_icon:
+                            st.image("./icons/green.png", width=120)
                     elif "indifferenziato" in dest or "secco" in dest:
-                        # Grigio
-                        show_custom_box("Dove buttarlo", dest_text, "#9E9E9E", "white", "🗑️")
+                        col_box, col_icon = st.columns([4, 1])
+                        with col_box:
+                            # Grigio
+                            show_custom_box("Dove buttarlo", dest_text, "#9E9E9E", "white", "🗑️")
+                        with col_icon:
+                            st.image("./icons/grey.png", width=120)
                     elif "rifiuto speciale" in dest:
                         # Rosso
                         warning_text= "Questo rifiuto non va nei bidoni domestici. Portalo all'isola ecologica."

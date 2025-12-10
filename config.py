@@ -19,7 +19,7 @@ def mostra_legenda_bidoni():
         {"nome": "Plastica",  "img": "./icons/yellow.png"},
         {"nome": "Vetro",     "img": "./icons/green.png"},
         {"nome": "Umido",     "img": "./icons/brown.png"},
-        {"nome": "Secco",     "img": "./icons/gray.png"}
+        {"nome": "Secco",     "img": "./icons/grey.png"}
         ]
 
         # Crea tante colonne quanti sono i bidoni nella lista
