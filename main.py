@@ -128,13 +128,13 @@ if api_key:
                 dati_rifiuto = ai_engine.analizza_immagine(image, api_key, citta)
 
                 # VISUALIZZAZIONE RISULTATI
-                # Se non è stato identificato
-                if dati_rifiuto["destinazione"] == "Non identificato":
+                # Se non è stato identificato (controlliamo il primo componente)
+                if not dati_rifiuto.get("componenti") or dati_rifiuto["componenti"][0]["destinazione"] == "Non identificato":
                     st.warning("⚠️ Non sono riuscito a capire di che oggetto si tratta. Prova con una foto più chiara.")
                     # Se l'oggetto è identificato correttamente, mostriamo i dettagli
                 else:
                     st.success("Analisi completata!")
-                    st.subheader(f"Oggetto: {dati_rifiuto['oggetto']}")
+                    st.subheader(f"Oggetto: {dati_rifiuto.get('oggetto_principale', 'Oggetto')}")
                         
                     # Funzione helper per creare box colorati
                     def show_custom_box(label, text, bg_color, text_color="black", icon="", is_small=False):
@@ -149,77 +149,87 @@ if api_key:
                         </div>
                         """, unsafe_allow_html=True)
 
-                    # 1. MATERIALE (Neutro - Light Blue/Grey)
-                    show_custom_box("Materiale", dati_rifiuto['materiale'], "#f0f2f6", "black", "📦")
+                    # ITERAZIONE SUI COMPONENTI
+                    for i, comp in enumerate(dati_rifiuto['componenti']):
+                        # Se ci sono più componenti, mostriamo il nome del componente
+                        if len(dati_rifiuto['componenti']) > 1:
+                             st.markdown(f"### 🔹 {comp['nome']}")
 
-                    # 2. AZIONE RICHIESTA (Neutro o evidenziato leggermente)
-                    show_custom_box("Azione richiesta", dati_rifiuto['azione'], "#f0f2f6", "black", "⚠️")
+                        # 1. MATERIALE (Neutro - Light Blue/Grey)
+                        show_custom_box("Materiale", comp['materiale'], "#f0f2f6", "black", "📦")
 
-                    # 3. DESTINAZIONE
-                    dest = dati_rifiuto['destinazione'].lower()
-                    dest_text = dati_rifiuto['destinazione'].upper()
-                    
-                    if "plastica" in dest:
-                        col_box, col_icon = st.columns([4, 1])
-                        with col_box:
-                            # Giallo
-                            show_custom_box("Dove buttarlo", dest_text, "#FFEB3B", "black", "🗑️")
-                        with col_icon:
-                            st.image("./icons/yellow.png", width=120)
-                    elif "carta" in dest:
-                        col_box, col_icon = st.columns([4, 1])
-                        with col_box:
-                            # Blu
-                            show_custom_box("Dove buttarlo", dest_text, "#2196F3", "white", "🗑️")
-                        with col_icon:
-                            st.image("./icons/blue.png", width=120)
-                    elif "organico" in dest or "umido" in dest:
-                        col_box, col_icon = st.columns([4, 1])
-                        with col_box:
-                            # Marrone
-                            show_custom_box("Dove buttarlo", dest_text, "#795548", "white", "🗑️")
-                        with col_icon:
-                            st.image("./icons/brown.png", width=120)
-                    elif "vetro" in dest:
-                        col_box, col_icon = st.columns([4, 1])
-                        with col_box:
-                            # Verde
-                            show_custom_box("Dove buttarlo", dest_text, "#4CAF50", "white", "🗑️")
-                        with col_icon:
-                            st.image("./icons/green.png", width=120)
-                    elif "indifferenziato" in dest or "secco" in dest:
-                        col_box, col_icon = st.columns([4, 1])
-                        with col_box:
-                            # Grigio
-                            show_custom_box("Dove buttarlo", dest_text, "#9E9E9E", "white", "🗑️")
-                        with col_icon:
-                            st.image("./icons/grey.png", width=120)
-                    elif "rifiuto speciale" in dest:
-                        col_box, col_icon = st.columns([4, 1])
-                        with col_box:
-                            # Rosso
-                            warning_text= "Questo rifiuto non va nei bidoni domestici. Portalo all'isola ecologica."
-                            show_custom_box("Rifiuto Speciale", warning_text, "#F44336", "white", "⚠️")
-                        with col_icon:
-                            st.image("./icons/red.png", width=120)
+                        # 2. AZIONE RICHIESTA (Neutro o evidenziato leggermente)
+                        show_custom_box("Azione richiesta", comp['azione'], "#f0f2f6", "black", "⚠️")
+
+                        # 3. DESTINAZIONE
+                        dest = comp['destinazione'].lower()
+                        dest_text = comp['destinazione'].upper()
                         
-                    else:
-                        # Default
-                        show_custom_box("Dove buttarlo", dest_text, "#f0f2f6", "black", "🗑️")
-                    
-                    if "rifiuto speciale" in dest or "isola ecologica" in dest:
-                        if 'url_maps_isola' in locals() and url_maps_isola:
-                            st.write("Ecco l'isola ecologica più vicina a te:")
-                            st.markdown(
-                                f'<iframe src="{url_maps_isola}" width="100%" height="350" style="border-radius:20px; border:1px solid #ddd;" allowfullscreen="" loading="lazy"></iframe>',
-                                unsafe_allow_html=True
-                            )
+                        if "plastica" in dest:
+                            col_box, col_icon = st.columns([4, 1])
+                            with col_box:
+                                # Giallo
+                                show_custom_box("Dove buttarlo", dest_text, "#FFEB3B", "black", "🗑️")
+                            with col_icon:
+                                st.image("./icons/yellow.png", width=120)
+                        elif "carta" in dest:
+                            col_box, col_icon = st.columns([4, 1])
+                            with col_box:
+                                # Blu
+                                show_custom_box("Dove buttarlo", dest_text, "#2196F3", "white", "🗑️")
+                            with col_icon:
+                                st.image("./icons/blue.png", width=120)
+                        elif "organico" in dest or "umido" in dest:
+                            col_box, col_icon = st.columns([4, 1])
+                            with col_box:
+                                # Marrone
+                                show_custom_box("Dove buttarlo", dest_text, "#795548", "white", "🗑️")
+                            with col_icon:
+                                st.image("./icons/brown.png", width=120)
+                        elif "vetro" in dest:
+                            col_box, col_icon = st.columns([4, 1])
+                            with col_box:
+                                # Verde
+                                show_custom_box("Dove buttarlo", dest_text, "#4CAF50", "white", "🗑️")
+                            with col_icon:
+                                st.image("./icons/green.png", width=120)
+                        elif "indifferenziato" in dest or "secco" in dest:
+                            col_box, col_icon = st.columns([4, 1])
+                            with col_box:
+                                # Grigio
+                                show_custom_box("Dove buttarlo", dest_text, "#9E9E9E", "white", "🗑️")
+                            with col_icon:
+                                st.image("./icons/grey.png", width=120)
+                        elif "rifiuto speciale" in dest:
+                            col_box, col_icon = st.columns([4, 1])
+                            with col_box:
+                                # Rosso
+                                warning_text= "Questo rifiuto non va nei bidoni domestici. Portalo all'isola ecologica."
+                                show_custom_box("Rifiuto Speciale", warning_text, "#F44336", "white", "⚠️")
+                            with col_icon:
+                                st.image("./icons/red.png", width=120)
+                            
                         else:
-                            st.warning("⚠️ Per vedere l'isola ecologica più vicina, per favore imposta la tua posizione nel box in alto '📍 Vuoi trovare l'isola ecologica?'.")
+                            # Default
+                            show_custom_box("Dove buttarlo", dest_text, "#f0f2f6", "black", "🗑️")
+                        
+                        if "rifiuto speciale" in dest or "isola ecologica" in dest:
+                            if 'url_maps_isola' in locals() and url_maps_isola:
+                                st.write("Ecco l'isola ecologica più vicina a te:")
+                                st.markdown(
+                                    f'<iframe src="{url_maps_isola}" width="100%" height="350" style="border-radius:20px; border:1px solid #ddd;" allowfullscreen="" loading="lazy"></iframe>',
+                                    unsafe_allow_html=True
+                                )
+                            else:
+                                st.warning("⚠️ Per vedere l'isola ecologica più vicina, per favore imposta la tua posizione nel box in alto '📍 Vuoi trovare l'isola ecologica?'.")
 
-                    # 4. NOTA DELL'ESPERTO (Neutro)
-                    st.markdown("---")
-                    show_custom_box("Nota dell'esperto", dati_rifiuto['note'], "#e8f5e9", "#1b5e20", "💡", is_small=True)
+                        # 4. NOTA DELL'ESPERTO (Neutro)
+                        if comp.get('note'):
+                             show_custom_box("Nota dell'esperto", comp['note'], "#e8f5e9", "#1b5e20", "💡", is_small=True)
+                        
+                        # Separatore tra componenti (se non è l'ultimo)
+                        if i < len(dati_rifiuto['componenti']) - 1:
+                            st.markdown("---")
 
             except Exception as e:
                 st.error(f"Si è verificato un errore: {e}")

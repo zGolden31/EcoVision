@@ -19,21 +19,30 @@ def analizza_immagine(image, api_key, citta):
                 prompt = f"""
                 Agisci come un esperto di riciclo e raccolta differenziata.
                 Analizza questa immagine.
-                Restituisci ESCLUSIVAMENTE un oggetto JSON con i seguenti campi:
-                - "oggetto": Nome breve dell'oggetto identificato.
-                - "materiale": Il materiale prevalente (es. Plastica, Vetro, Carta, Poliaccoppiato).
-                - "destinazione": indica in che BIDONE va buttato. Scegli SOLO tra questi: ["Plastica", "Carta", "Vetro", "Organico", "Indifferenziato", "Rifiuto Speciale", "Non identificato"].
-                - "azione": Cosa fare prima di buttarlo (es. "Sciacqua bene", "Schiaccia", "Separa il tappo", "Nessuna azione").
-                - "note": Una spiegazione brevissima (se presenta più componenti...specificare dove vanno buttate ognuna) o un consiglio specifico (max 1 frase).
+                Se l'oggetto è composto da più parti di materiali diversi (es. bottiglia di vetro con tappo di plastica, vasetto di yogurt con linguetta in alluminio), DEVI separare i componenti.
+
+                Restituisci ESCLUSIVAMENTE un oggetto JSON con la seguente struttura:
+                {{
+                    "oggetto_principale": "Nome dell'oggetto intero (es. Bottiglia d'acqua)",
+                    "componenti": [
+                        {{
+                            "nome": "Nome del componente (es. Bottiglia, Tappo)",
+                            "materiale": "Materiale (es. Plastica, Vetro, Carta, Poliaccoppiato)",
+                            "destinazione": "Dove va buttato (Scegli tra: Plastica, Carta, Vetro, Organico, Indifferenziato, Rifiuto Speciale, Non identificato)",
+                            "azione": "Azione richiesta (es. Sciacqua, Schiaccia, Stacca dal resto, Nessuna azione)",
+                            "note": "Breve consiglio o motivazione (max 1 frase)"
+                        }}
+                    ]
+                }}
+
                 L'utente si trova in {citta}.
 
                 1. Identifica l'oggetto principale.
-                2. Scegli la categoria corretta tra quelle consentite.
-                3. Controlla se l'oggetto sembra sporco (es. residui di cibo, salsa, liquido).
-                4. Fornisci istruzioni chiare:
-                    - Se è sporco, dì esplicitamente come pulirlo.
+                2. Se ci sono più materiali, crea un elemento nella lista "componenti" per ognuno.
+                3. Se l'oggetto è monomateriale, la lista "componenti" avrà un solo elemento.
+                4. Controlla se l'oggetto sembra sporco e indica l'azione di pulizia se necessaria.
                     
-                Se l'immagine non è un rifiuto o non è chiara, restituisci "destinazione": "Non identificato".
+                Se l'immagine non è un rifiuto o non è chiara, restituisci un unico componente con "destinazione": "Non identificato".
                 """
 
                 # Chiamata alle API e invio del prompt con l'immagine
