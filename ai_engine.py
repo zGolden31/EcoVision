@@ -24,13 +24,13 @@ def analizza_immagine(image, api_key, citta):
                 Restituisci ESCLUSIVAMENTE un oggetto JSON con la seguente struttura:
                 {{
                     "oggetto_principale": "Nome dell'oggetto intero (es. Bottiglia d'acqua)",
+                    "materiali": "Elenca tutti i materiali presenti (es. Vetro e Plastica)",
+                    "azione": "Azione complessiva da compiere (es. Separa il tappo dalla bottiglia e sciacqua entrambi)",
+                    "note": "Breve consiglio o motivazione (max 1 frase)",
                     "componenti": [
                         {{
                             "nome": "Nome del componente (es. Bottiglia, Tappo)",
-                            "materiale": "Materiale (es. Plastica, Vetro, Carta, Poliaccoppiato)",
-                            "destinazione": "Dove va buttato (Scegli tra: Plastica, Carta, Vetro, Organico, Indifferenziato, Rifiuto Speciale, Non identificato)",
-                            "azione": "Azione richiesta (es. Sciacqua, Schiaccia, Stacca dal resto, Nessuna azione)",
-                            "note": "Breve consiglio o motivazione (max 1 frase)"
+                            "destinazione": "Dove va buttato (Scegli tra: Plastica, Carta, Vetro, Organico, Indifferenziato, Rifiuto Speciale, Non identificato)"
                         }}
                     ]
                 }}
@@ -38,9 +38,9 @@ def analizza_immagine(image, api_key, citta):
                 L'utente si trova in {citta}.
 
                 1. Identifica l'oggetto principale.
-                2. Se ci sono più materiali, crea un elemento nella lista "componenti" per ognuno.
-                3. Se l'oggetto è monomateriale, la lista "componenti" avrà un solo elemento.
-                4. Controlla se l'oggetto sembra sporco e indica l'azione di pulizia se necessaria.
+                2. Descrivi i materiali e l'azione da compiere a livello globale per l'intero oggetto.
+                3. Nella lista "componenti", inserisci SOLO la destinazione per ogni parte separabile.
+                4. Se l'oggetto è monomateriale, la lista "componenti" avrà un solo elemento.
                     
                 Se l'immagine non è un rifiuto o non è chiara, restituisci un unico componente con "destinazione": "Non identificato".
                 """

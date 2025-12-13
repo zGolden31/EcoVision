@@ -149,55 +149,59 @@ if api_key:
                         </div>
                         """, unsafe_allow_html=True)
 
-                    # ITERAZIONE SUI COMPONENTI
+                    # 1. MATERIALI (Globale - Neutro)
+                    if dati_rifiuto.get('materiali'):
+                        show_custom_box("Materiali", dati_rifiuto['materiali'], "#f0f2f6", "black", "📦")
+
+                    # 2. AZIONE RICHIESTA (Globale - Neutro)
+                    if dati_rifiuto.get('azione'):
+                        show_custom_box("Azione richiesta", dati_rifiuto['azione'], "#f0f2f6", "black", "⚠️")
+
+                    st.markdown("---")
+                    st.write("**Dove buttarlo:**")
+
+                    # ITERAZIONE SUI COMPONENTI (Solo per la destinazione)
                     for i, comp in enumerate(dati_rifiuto['componenti']):
-                        # Se ci sono più componenti, mostriamo il nome del componente
-                        if len(dati_rifiuto['componenti']) > 1:
-                             st.markdown(f"### 🔹 {comp['nome']}")
-
-                        # 1. MATERIALE (Neutro - Light Blue/Grey)
-                        show_custom_box("Materiale", comp['materiale'], "#f0f2f6", "black", "📦")
-
-                        # 2. AZIONE RICHIESTA (Neutro o evidenziato leggermente)
-                        show_custom_box("Azione richiesta", comp['azione'], "#f0f2f6", "black", "⚠️")
-
+                        
                         # 3. DESTINAZIONE
                         dest = comp['destinazione'].lower()
                         dest_text = comp['destinazione'].upper()
-                        
+                        # Se abbiamo più componenti, specifichiamo di quale componente si tratta nel titolo del box
+                        label_box = f"Dove buttarlo: {comp['nome']}" if len(dati_rifiuto['componenti']) > 1 else "Dove buttarlo"
+
                         if "plastica" in dest:
                             col_box, col_icon = st.columns([4, 1])
                             with col_box:
                                 # Giallo
-                                show_custom_box("Dove buttarlo", dest_text, "#FFEB3B", "black", "🗑️")
+                                show_custom_box(label_box, dest_text, "#FFEB3B", "black", "🗑️")
                             with col_icon:
                                 st.image("./icons/yellow.png", width=120)
                         elif "carta" in dest:
                             col_box, col_icon = st.columns([4, 1])
                             with col_box:
                                 # Blu
-                                show_custom_box("Dove buttarlo", dest_text, "#2196F3", "white", "🗑️")
+                                show_custom_box(label_box, dest_text, "#2196F3", "white", "🗑️")
                             with col_icon:
                                 st.image("./icons/blue.png", width=120)
                         elif "organico" in dest or "umido" in dest:
                             col_box, col_icon = st.columns([4, 1])
                             with col_box:
                                 # Marrone
-                                show_custom_box("Dove buttarlo", dest_text, "#795548", "white", "🗑️")
+                                show_custom_box(label_box, dest_text, "#795548", "white", "🗑️")
                             with col_icon:
                                 st.image("./icons/brown.png", width=120)
                         elif "vetro" in dest:
                             col_box, col_icon = st.columns([4, 1])
                             with col_box:
                                 # Verde
-                                show_custom_box("Dove buttarlo", dest_text, "#4CAF50", "white", "🗑️")
+                                show_custom_box(label_box, dest_text, "#4CAF50", "white", "🗑️")
                             with col_icon:
                                 st.image("./icons/green.png", width=120)
                         elif "indifferenziato" in dest or "secco" in dest:
                             col_box, col_icon = st.columns([4, 1])
                             with col_box:
                                 # Grigio
-                                show_custom_box("Dove buttarlo", dest_text, "#9E9E9E", "white", "🗑️")
+                                show_custom_box(label_box, dest_text, "#9E9E9E", "white", "🗑️")
                             with col_icon:
                                 st.image("./icons/grey.png", width=120)
                         elif "rifiuto speciale" in dest:
@@ -211,7 +215,7 @@ if api_key:
                             
                         else:
                             # Default
-                            show_custom_box("Dove buttarlo", dest_text, "#f0f2f6", "black", "🗑️")
+                            show_custom_box(label_box, dest_text, "#f0f2f6", "black", "🗑️")
                         
                         if "rifiuto speciale" in dest or "isola ecologica" in dest:
                             if 'url_maps_isola' in locals() and url_maps_isola:
@@ -223,13 +227,10 @@ if api_key:
                             else:
                                 st.warning("⚠️ Per vedere l'isola ecologica più vicina, per favore imposta la tua posizione nel box in alto '📍 Vuoi trovare l'isola ecologica?'.")
 
-                        # 4. NOTA DELL'ESPERTO (Neutro)
-                        if comp.get('note'):
-                             show_custom_box("Nota dell'esperto", comp['note'], "#e8f5e9", "#1b5e20", "💡", is_small=True)
-                        
-                        # Separatore tra componenti (se non è l'ultimo)
-                        if i < len(dati_rifiuto['componenti']) - 1:
-                            st.markdown("---")
+                    # 4. NOTA DELL'ESPERTO (Globale - Neutro)
+                    if dati_rifiuto.get('note'):
+                        st.markdown("---")
+                        show_custom_box("Nota dell'esperto", dati_rifiuto['note'], "#e8f5e9", "#1b5e20", "💡", is_small=True)
 
             except Exception as e:
                 st.error(f"Si è verificato un errore: {e}")
