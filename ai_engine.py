@@ -1,59 +1,103 @@
-import google.generativeai as genai     # API Google Gemini ("cervello")
-import json                        # Per la gestione dei dati JSON  
-import streamlit as st             # Framework per la creazione della web app
- 
-def analizza_immagine(image, api_key, citta):
+import streamlit as st # Framework per la creazione della web app
+import json # Gestione dei dati JSON
+import re # Gestione delle stringhe
+from google import genai # API Google Gemini ("cervello")
+from google.genai import types # Tipi di dati per Gemini
+
+# Impostare come constanti il modello di Gemini
+# Usiamo gemini-2.0-flash-lite
+VISION_MODEL_ID = "gemini-2.0-flash-lite"
+CHAT_MODEL_ID = "gemini-2.0-flash-lite"
+
+def _get_client(api_key):
+    """
+    Funzione interna per inizializzare il Client GenAI.
+    L'uso di un'istanza client evita problemi di configurazione globale.
+    """
+    return genai.Client(api_key=api_key)
+
+def _clean_json_text(raw_text):
+    """
+    Funzione di supporto per ripulire i blocchi di codice markdown 
+    se l'IA li include (es. ```json ... ```) usando le regex
+    """
     try:
-        # Configura Gemini
-            genai.configure(api_key=api_key)
-                
-            with st.spinner("Sto analizzando l'oggetto..."):
+        # Regex per rimuovere ```json ... ``` o solo ``` ... ``` all'inizio/fine
+        cleaned = re.sub(r"^```json\s*", "", raw_text, flags=re.MULTILINE)
+        cleaned = re.sub(r"^```\s*", "", cleaned, flags=re.MULTILINE)
+        cleaned = re.sub(r"```\s*$", "", cleaned, flags=re.MULTILINE)
+        return cleaned.strip()
+    except Exception:
+        return raw_text
 
-                # Forzare la risposta in formato JSON
-                generation_config = {"response_mime_type": "application/json"}
-                        
-                # Carichiamo il modello 
-                model = genai.GenerativeModel('models/gemini-2.5-flash-lite', generation_config=generation_config)
+def analizza_immagine(image, api_key, citta):
+    """
+    Analizza un'immagine per identificare il tipo di rifiuto e le istruzioni di smaltimento.
+    Restituisce un dizionario Python (JSON parsato).
+    """
+    client = _get_client(api_key)
+    try:
+        with st.spinner("Sto analizzando l'oggetto..."):
 
-                # Definiamo il Prompt
-                prompt = f"""
-                Agisci come un esperto di riciclo e raccolta differenziata.
-                Analizza questa immagine.
-                Se l'oggetto è composto da più parti di materiali diversi (es. bottiglia di vetro con tappo di plastica, vasetto di yogurt con linguetta in alluminio), DEVI separare i componenti.
+            # Configura lo schema della risposta usando il modulo "types"
+            # Forziamo il tipo MIME JSON per ottenere un output strutturato
+            config = types.GenerateContentConfig(
+                response_mime_type="application/json"
+                temperature = 0.2 # Temperatura bassa per risultati più deterministici e meno creativi
+            )
 
-                Restituisci ESCLUSIVAMENTE un oggetto JSON con la seguente struttura:
-                {{
-                    "oggetto_principale": "Nome dell'oggetto intero (es. Bottiglia d'acqua)",
-                    "materiali": "Elenca tutti i materiali presenti (es. Vetro e Plastica)",
-                    "azione": "Azione complessiva da compiere (es. Separa il tappo dalla bottiglia e sciacqua entrambi)",
-                    "note": "Breve consiglio o motivazione (max 1 frase)",
-                    "componenti": [
-                        {{
-                            "nome": "Nome del componente (es. Bottiglia, Tappo)",
-                            "destinazione": "Dove va buttato (Scegli tra: Plastica, Carta, Vetro, Organico, Indifferenziato, Rifiuto Speciale, Non identificato)"
-                        }}
-                    ]
-                }}
+            prompt = f"""
+            Agisci come un esperto di riciclo e raccolta differenziata.
+            Analizza questa immagine.
+            Se l'oggetto è composto da più parti di materiali diversi (es. bottiglia di vetro con tappo di plastica), DEVI separare i componenti.
 
-                L'utente si trova in {citta}.
+            Restituisci ESCLUSIVAMENTE un oggetto JSON con la seguente struttura:
+            {{
+                "oggetto_principale": "Nome dell'oggetto intero (es. Bottiglia d'acqua)",
+                "materiali": "Elenca tutti i materiali presenti (es. Vetro e Plastica)",
+                "azione": "Azione complessiva da compiere (es. Separa il tappo dalla bottiglia)",
+                "note": "Breve consiglio o motivazione",
+                "componenti": [
+                    {{
+                        "nome": "Nome del componente (es. Bottiglia, Tappo)",
+                        "destinazione": "Dove va buttato (Scegli tra: Plastica, Carta, Vetro, Organico, Indifferenziato, Rifiuto Speciale, Non identificato)"
+                    }}
+                ]
+            }}
 
-                1. Identifica l'oggetto principale.
-                2. Descrivi i materiali e l'azione da compiere a livello globale per l'intero oggetto.
-                3. Nella lista "componenti", inserisci SOLO la destinazione per ogni parte separabile.
-                4. Se l'oggetto è monomateriale, la lista "componenti" avrà un solo elemento.
-                    
-                Se l'immagine non è un rifiuto o non è chiara, restituisci un unico componente con "destinazione": "Non identificato".
-                """
-
-                # Chiamata alle API e invio del prompt con l'immagine
-                response = model.generate_content([prompt, image])
-
-                # PARSING: Trasformiamo il testo JSON in un dizionario Python
-                return json.loads(response.text)
+            L'utente si trova in {citta}.
+            1. Identifica l'oggetto principale.
+            2. Descrivi i materiali e l'azione globale.
+            3. Nella lista "componenti", inserisci SOLO la destinazione per ogni parte.
+            4. Se l'immagine non è chiara, restituisci un componente con "destinazione": "Non identificato".
+            """
             
-    # Solleviamo un'eccezione in caso di errore, gestita poi in main.py
-    except Exception as e:
-        raise e
+            # Chiamate API usando client.models della nuova libreria
+            response = client.models.generate_content(
+                model_id=VISION_MODEL_ID,
+                content=[prompt, image],
+                config=config
+            )
+
+            # Parsing JSON con meccanismo di sicurezza
+            try:
+                # Puliamo il testo, rimuovento i backticks del codice markdown
+                clean_text = _clean_json_text(response.text)
+                return json.loads(clean_text)
+
+            except json.JSONDecodeError as json_err:
+                print(f"Errore Parsing JSON: {json_err}. Testo grezzo: {response.text}")
+                # Dizionario di fallback per evitare che l'app vada in crash
+                return {
+                    "oggetto_principale": "Errore Analisi",
+                    "materiali": "Sconosciuto",
+                    "azione": "Riprova con una foto più chiara.",
+                    "note": "L'IA non ha restituito un formato valido.",
+                    "componenti": [{"nome": "Oggetto non identificato", "destinazione": "Non identificato"}]
+                }
+            except Exception as e:
+                # Solleviamo l'eccezione al main.py per mostrarla nell'interfaccia utente
+               raise e
 
 def get_chatbot_response(user_query, context_data, api_key):
     """
