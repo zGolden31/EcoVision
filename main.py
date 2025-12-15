@@ -5,27 +5,73 @@ from geo_loader import carica_dati_geografici, get_city_from_latlon_italian, dis
 import ai_engine                    # Funzioni di analisi e risposta AI
 from streamlit_js_eval import get_geolocation  # Per ottenere la geolocalizzazione dell'utente
 
-# CONFIFGURAZIONE PAGINA
+# --- CONFIFGURAZIONE PAGINA ---
 config.configura_pagina()
 
+# Mappatura dei colori e icone per i bidoni
+CONFIG_BIDONI = {
+    "plastica":        {"bg": "#FFEB3B", "text": "black", "icon": "./icons/yellow.png"},
+    "carta":           {"bg": "#2196F3", "text": "white", "icon": "./icons/blue.png"},
+    "cartone":         {"bg": "#2196F3", "text": "white", "icon": "./icons/blue.png"},
+    "organico":        {"bg": "#795548", "text": "white", "icon": "./icons/brown.png"},
+    "umido":           {"bg": "#795548", "text": "white", "icon": "./icons/brown.png"},
+    "vetro":           {"bg": "#4CAF50", "text": "white", "icon": "./icons/green.png"},
+    "indifferenziato": {"bg": "#9E9E9E", "text": "white", "icon": "./icons/grey.png"},
+    "secco":           {"bg": "#9E9E9E", "text": "white", "icon": "./icons/grey.png"},
+    "rifiuto speciale": {"bg": "#F44336", "text": "white", "icon": "./icons/red.png"},
+    "raee":            {"bg": "#F44336", "text": "white", "icon": "./icons/red.png"}
+}
+# Stile di default per i bidoni
+DEFAULT_STYLE = {"bg": "#f0f2f6", "text": "black", "icon": "./icons/grey.png"}
+
+# Funzioni di utilità e interfaccia
+
+def show_custom_box(label, text, bg_color, text_color="black", icon="", is_small=False):
+    """
+    Renderizza un box colorato con stile HTML.
+    """
+    # Configurazione dimensioni e tag
+    padding = "10px" if is_small else "15px"
+    title_tag = "h6" if is_small else "h5"
+    text_tag = "p" if is_small else "h3"
+    
+    st.markdown(f"""
+    <div style="background-color: {bg_color}; padding: {padding}; border-radius: 10px; margin-bottom: 10px; color: {text_color};">
+        <{title_tag} style="margin:0; color: {text_color}; font-weight: bold;">{icon} {label}</{title_tag}>
+        <{text_tag} style="margin:0; color: {text_color}; font-size: {'1.1em' if is_small else 'inherit'};">{text}</{text_tag}>
+    </div>
+    """, unsafe_allow_html=True)
+
+def mostra_mappa(citta, tipo_mappa=0):
+    """
+    Mostra la mappa tramite Google Maps
+    tipo_mappa: 0 per città generica, 1 per ricerca 'isola ecologica'    
+    """
+    if not citta:
+        return
+    url_maps = f"http://googleusercontent.com/maps.google.com/{tipo_mappa}{citta}&output=embed"
+    st.markdown(
+        f"<iframe src='{url_maps}' width='100%' height='350' style='border-radius:20px; border:1px solid #ddd;' allowfullscreen='' loading='lazy'></iframe>", 
+        unsafe_allow_html=True
+        )
+
 # INTESTAZIONE E UI PRINCIPALE
-st.title("♻️ EcoVision: dove si butta?") # Titolo principale
+st.title("♻️ EcoVision: dove si butta?")
 st.markdown("""
 Carica una foto di un rifiuto o scattala direttamente. 
 L'Intelligenza Artificiale ti dirà **cos'è**, **se devi pulirlo** e **in quale bidone va buttato**.
-""") # Descrizione in markdown
+""")
+# Mostra la legenda dei bidoni
+config.mostra_legenda_bidoni() 
 
-config.mostra_legenda_bidoni() # Mostra la legenda dei bidoni
 
-
-# CONFIGURAZIONE CONTESTO UTENTE (GEOLOCALIZZAZIONE)
-# Carichiamo i dati PRIMA di disegnare l'interfaccia
+# --- CONFIGURAZIONE GEOLOCALIZZAZIONE ---
 comuni_italiani = carica_dati_geografici()
 citta = None # inizializziamo la variabile città
 
-# 1 GEOLOCALIZZAZIONE AUTOMATICA
-# Checkbox con KEY; Nota: ora usiamo st.session_state.usa_gps per leggere il valore, ma st.checkbox gestisce l'UI
+# Checkbox per GPS (disattiva la selezione manuale) 
 usa_gps = st.checkbox("📍 Usa la mia posizione attuale per trovare l'isola ecologica", key="usa_gps", on_change=disattiva_selezioneman)
+
 
 if usa_gps:
     # Questa funzione chiama il browser per il permesso GPS
@@ -36,84 +82,55 @@ if usa_gps:
         lat = loc['coords']['latitude']
         lon = loc['coords']['longitude']
         citta = get_city_from_latlon_italian(lat, lon)
-    
-        st.success(f"Posizione rilevata! Lat: {lat}, Lon: {lon}, città: {citta}")
-        st.info(f"Se la città non è corretta, puoi impostarla manualmente qui sotto")
+        st.success(f"Posizione rilevata: {citta}")
     else:
         st.warning("In attesa del permesso GPS o segnale debole...")
 else:
-    st.info("Attiva la spunta sopra per localizzarti.")
+    st.info("Attiva la spunta sopra per localizzarti automaticamente")
 
 # 2 GEOLOCALIZZAZIONE MANUALE (priorità sulla automatica)
-# Usiamo un expander per mantenere l'interfaccia pulita
-# L'utente può scegliere di inserire la propria posizione per avere indicazioni più precise.
-with st.expander("📍 Vuoi trovare l'isola ecologica? **Imposta la tua posizione manualmente** "):
-    st.write("Inserisci la tua posizione per ricevere indicazioni personalizzate per lo smaltimento dei rifiuti e per l'isola ecologica più vicina a te.")
-    # Usiamo una sola selectbox a larghezza intera per selezionare il comune
+
+with st.expander("📍 Imposta la città manualmente"):
     citta_man = st.selectbox(
         "Cerca la tua città",
         options=comuni_italiani,
         index=None,
         placeholder="Scrivi qui il tuo comune (es. Bari)...",
         key="select_citta_manuale",
-        on_change=disattiva_gps # Disattiviamo il GPS se l'utente seleziona manualmente la città
+        # Disattiviamo il GPS se l'utente seleziona manualmente la città
+        on_change=disattiva_gps 
     )
 
-# Conferma visiva dell'inserimento
-if citta_man:
+# Se la città è stata selezionata manualmente, la salviamo
+if citta:
     citta = citta_man
-    st.success(f"Posizione salvata: {citta_man}")
+    st.success(f"Posizione salvata: {citta}")
 
-
+# Mostra mappa della città corrente (solo se definita)
 if citta:    
-    url_maps_citta = f"https://www.google.com/maps?q={citta}&output=embed" # Link a Google Maps per città selezionata
-    url_maps_isola = f"https://www.google.com/maps?q=isola+ecologica+{citta}&output=embed" # Link a Google Maps per l'isola ecologica
-    st.write("Ecco la città in cui ti trovi:")    
-    # Iframe HTML
-    st.markdown(
-        f'<iframe src="{url_maps_citta}" width="100%" height="350" style="border-radius:20px; border:1px solid #ddd;" allowfullscreen="" loading="lazy"></iframe>',
-        unsafe_allow_html=True
-    )
-    # SPIEGAZIONE DEL CODICE iframe:
-        # f'<iframe '--> Inizio della f-string: serve per inserire variabili Python (come {url_maps}) dentro il testo
-        # f'src="{url_maps}" --> Qui inseriamo dinamicamente l'URL che la finestra deve visualizzare
-        # [width]: LARGHEZZA. "100%" significa "occupa tutto lo spazio orizzontale disponibile".
-        # [height]: ALTEZZA. Fissa l'altezza della mappa a 350 pixel.
-        # [style]: STILE CSS. Serve per abbellire il riquadro.
-        # "border-radius:20px": Arrotonda gli angoli di 20px per un aspetto più morbido.
-        # "border:1px solid #ddd": Crea un bordo sottile grigio chiaro attorno alla mappa.
-        # [allowfullscreen]: Piacere utente. Abilita il pulsante nella mappa per aprirla a tutto schermo.
-        # [loading]: PERFORMANCE. "lazy" (pigro) significa: "Non caricare la mappa finché l'utente 
-        # non scorre la pagina fino a qui". Rende l'avvio dell'app molto più veloce.
-        # '</iframe>' Chiusura del tag iframe
-        # [unsafe_allow_html]: SICUREZZA. 
-        # Di base Streamlit blocca l'HTML per sicurezza. Con "True" forziamo Streamlit 
-        # a fidarsi di noi e a disegnare l'iframe invece di scriverlo come testo.
+    st.write("Ecco la città in cui ti trovi:")
+    mostra_mappa(citta,0) # tipo_mappa=0 per mappa standard
 
-st.markdown("---") # Linea di separazione
+# Linea di separazione
+st.markdown("---") 
 
 
-# GESTIONE SICUREZZA E AUTENTICAZIONE API KEY
-api_key = None
-try:
-    # Recupero chiave dai 'secrets' di Streamlit
-    if "GOOGLE_API_KEY" in st.secrets:
-        api_key = st.secrets["GOOGLE_API_KEY"]
-except Exception as e:
-    st.warning("Chiave API non trovata nelle configurazioni segrete.")
-    # Se non trovata, chiediamo all'utente di inserirla manualmente
+# --- GESTIONE SICUREZZA E AUTENTICAZIONE API KEY ---
+api_key = st.secrets.get("GOOGLE_API_KEY")
+if not api_key:
+    st.warning("Chiave API non trovata.")
     api_key = st.text_input("Inserisci manualmente la tua Google API Key:", type="password")
 
-# ACQUISIZIONE IMMAGINE E LOGICA AI
+# --- LOGICA DI INPUT E ANALISI ---
 if api_key:
     # Selezione metodo di input (Upload file e Fotocamera)
-    option = st.radio("Come vuoi caricare l'immagine?", ("Carica file", "Scatta foto"))
+    option = st.radio("Come vuoi caricare l'immagine?", ("Carica file", "Scatta foto"), horizontal=True, label_visibility="collapsed")
+    
     image_file = None
-
     if option == "Carica file":
         image_file = st.file_uploader("Scegli un'immagine...", type=["jpg", "jpeg", "png", "webp"])
     else:
-        image_file = st.camera_input("Scatta una foto al rifiuto")
+        image_file = st.camera_input("Scatta una foto")
 
     # Elaborazione immagine se presente
     if image_file is not None:
@@ -123,129 +140,80 @@ if api_key:
 
 
         # Logica del bottone di analisi
-        if st.button("Analizza Rifiuto 🔍"):
+        if st.button("Analizza Rifiuto 🔍", use_container_width=True):
             try:
                 # Chiamata alla funzione di analisi AI
-                with st.spinner("Sto analizzando l'oggetto..."):
-                     # Salviamo il risultato nello stato della sessione per non perderlo ai rerun
-                    st.session_state.analysis_result = ai_engine.analizza_immagine(image, api_key, citta)
-                    # Resetta la chat quando si analizza un nuovo oggetto
-                    st.session_state.chat_history = [] 
+                st.session_state.analysis_result = ai_engine.analizza_immagine(image, api_key, citta)
+                # Resetta la chat quando si analizza un nuovo oggetto
+                st.session_state.chat_history = [] 
             except Exception as e:
                 st.error(f"Si è verificato un errore durante l'analisi: {e}")
 
-        # --- SEZIONE RISULTATI (persistente) ---
+        # --- VISUALIZZAZIONE RISULTATI ---
         if "analysis_result" in st.session_state:
-            dati_rifiuto = st.session_state.analysis_result
+            dati = st.session_state.analysis_result
             
-            # 1. VISUALIZZAZIONE OGGETTO E CONSIGLI
             # Se non è stato identificato (controlliamo il primo componente)
-            if not dati_rifiuto.get("componenti") or dati_rifiuto["componenti"][0]["destinazione"] == "Non identificato":
+            if not dati.get("componenti") or dati["componenti"][0]["destinazione"] == "Non identificato":
                 st.warning("⚠️ Non sono riuscito a capire di che oggetto si tratta. Prova con una foto più chiara.")
             else:
-                if not st.session_state.get('chat_history'): # Show success only initially or always? Let's keep it simple.
-                     st.success("Analisi completata!")
-
-                st.subheader(f"Oggetto: {dati_rifiuto.get('oggetto_principale', 'Oggetto')}")
+                st.subheader(f"Oggetto: {dati.get('oggetto_principale', 'Sconosciuto')}")
                     
-                # Funzione helper per creare box colorati
-                def show_custom_box(label, text, bg_color, text_color="black", icon="", is_small=False):
-                    padding = "10px" if is_small else "15px"
-                    title_tag = "h6" if is_small else "h5"
-                    text_tag = "p" if is_small else "h3" # Use 'p' or 'h4' for smaller text
-                    
-                    st.markdown(f"""
-                    <div style="background-color: {bg_color}; padding: {padding}; border-radius: 10px; margin-bottom: 10px; color: {text_color};">
-                        <{title_tag} style="margin:0; color: {text_color}; font-weight: bold;">{icon} {label}</{title_tag}>
-                        <{text_tag} style="margin:0; color: {text_color}; font-size: {'1.1em' if is_small else 'inherit'};">{text}</{text_tag}>
-                    </div>
-                    """, unsafe_allow_html=True)
+                # Info materiale
+                if dati.get('materiali'):
+                    show_custom_box("Materiali", dati['materiali'], "#f0f2f6", "black", "📦")
 
-                # 1. MATERIALI (Globale - Neutro)
-                if dati_rifiuto.get('materiali'):
-                    show_custom_box("Materiali", dati_rifiuto['materiali'], "#f0f2f6", "black", "📦")
-
-                # 2. AZIONE RICHIESTA (Globale - Neutro)
-                if dati_rifiuto.get('azione'):
-                    show_custom_box("Azione richiesta", dati_rifiuto['azione'], "#f0f2f6", "black", "⚠️")
+                # Info azione
+                if dati.get('azione'):
+                    show_custom_box("Azione richiesta", dati['azione'], "#f0f2f6", "black", "⚠️")
 
                 st.markdown("---")
-                st.write("**Dove buttarlo:**")
 
-                # ITERAZIONE SUI COMPONENTI (Solo per la destinazione)
-                for i, comp in enumerate(dati_rifiuto['componenti']):
-                    
-                    # 3. DESTINAZIONE
-                    dest = comp['destinazione'].lower()
-                    dest_text = comp['destinazione'].upper()
-                    # Se abbiamo più componenti, specifichiamo di quale componente si tratta nel titolo del box
-                    label_box = f"Dove buttarlo: {comp['nome']}" if len(dati_rifiuto['componenti']) > 1 else "Dove buttarlo"
-
-                    if "plastica" in dest:
-                        col_box, col_icon = st.columns([4, 1])
-                        with col_box:
-                            # Giallo
-                            show_custom_box(label_box, dest_text, "#FFEB3B", "black", "🗑️")
-                        with col_icon:
-                            st.image("./icons/yellow.png", width=120)
-                    elif "carta" in dest:
-                        col_box, col_icon = st.columns([4, 1])
-                        with col_box:
-                            # Blu
-                            show_custom_box(label_box, dest_text, "#2196F3", "white", "🗑️")
-                        with col_icon:
-                            st.image("./icons/blue.png", width=120)
-                    elif "organico" in dest or "umido" in dest:
-                        col_box, col_icon = st.columns([4, 1])
-                        with col_box:
-                            # Marrone
-                            show_custom_box(label_box, dest_text, "#795548", "white", "🗑️")
-                        with col_icon:
-                            st.image("./icons/brown.png", width=120)
-                    elif "vetro" in dest:
-                        col_box, col_icon = st.columns([4, 1])
-                        with col_box:
-                            # Verde
-                            show_custom_box(label_box, dest_text, "#4CAF50", "white", "🗑️")
-                        with col_icon:
-                            st.image("./icons/green.png", width=120)
-                    elif "indifferenziato" in dest or "secco" in dest:
-                        col_box, col_icon = st.columns([4, 1])
-                        with col_box:
-                            # Grigio
-                            show_custom_box(label_box, dest_text, "#9E9E9E", "white", "🗑️")
-                        with col_icon:
-                            st.image("./icons/grey.png", width=120)
-                    elif "rifiuto speciale" in dest:
-                        col_box, col_icon = st.columns([4, 1])
-                        with col_box:
-                            # Rosso
-                            warning_text= "Questo rifiuto non va nei bidoni domestici. Portalo all'isola ecologica."
-                            show_custom_box("Rifiuto Speciale", warning_text, "#F44336", "white", "⚠️")
-                        with col_icon:
-                            st.image("./icons/red.png", width=120)
-                        
-                    else:
-                        # Default
-                        show_custom_box(label_box, dest_text, "#f0f2f6", "black", "🗑️")
-                    
-                    if "rifiuto speciale" in dest or "isola ecologica" in dest:
-                        if 'url_maps_isola' in locals() and url_maps_isola:
-                            st.write("Ecco l'isola ecologica più vicina a te:")
-                            st.markdown(
-                                f'<iframe src="{url_maps_isola}" width="100%" height="350" style="border-radius:20px; border:1px solid #ddd;" allowfullscreen="" loading="lazy"></iframe>',
-                                unsafe_allow_html=True
-                            )
-                        else:
-                            st.warning("⚠️ Per vedere l'isola ecologica più vicina, per favore imposta la tua posizione nel box in alto '📍 Vuoi trovare l'isola ecologica?'.")
-
-                # 4. NOTA DELL'ESPERTO (Globale - Neutro)
-                if dati_rifiuto.get('note'):
-                    st.markdown("---")
-                    show_custom_box("Nota dell'esperto", dati_rifiuto['note'], "#e8f5e9", "#1b5e20", "💡", is_small=True)
-
+                # ITERAZIONE SUI COMPONENTI 
+                flag_rifiuto_speciale = False # Flag per tracciare se mostrare la mappa DOPO il ciclo
                 
-                # --- CHATBOT SECTION ---
+                for comp in dati['componenti']:
+                    nome_comp = comp['nome']
+                    destinazione = comp['destinazione'].lower()
+                    dest_display = comp['destinazione'].upper()
+
+                    # Titolo dinamico
+                    label = f"Dove buttarlo: {nome_comp}" if len(dati['componenti']) > 1 else "Dove buttarlo"
+
+                    # Stile dinamico tramite dizionario
+                    stile = DEFAULT_STYLE
+                    # Cerca una parola chiave (es. "plastica") dentro la destinazione (es. "plastica rigida")
+                    for key, value in CONFIG_BIDONI.items():
+                        if key in destinazione:
+                            stile = value
+                            break
+                    # Gestione specifica per Rifiuti speciali
+                    if "rifiuto speciale" in destinazione or "raee" in destinazione:
+                        flag_rifiuto_speciale = True
+                        warning = "Non va nei bidoni di casa. Portalo all'isola ecologica."
+                        show_custom_box(label, warning, stile["bg"], stile["text"], "🚫")
+                    else:
+                        # Rendering standard
+                        c1, c2 = st.columns([4, 1])
+                        with c1:
+                            show_custom_box(label, dest_display, stile["bg"], stile["text"], "🗑️")
+                        with c2:
+                            st.image(stile["icon"], width=100)
+                # Mappa isola ecologia (fuori dal for loop)
+                if flag_rifiuto_speciale:
+                    st.warning("⚠️ Questo oggetto richiede smaltimento speciale.")
+                    if citta:
+                        st.write("📍 Ecco l'isola ecologica più vicina a te:")
+                        mostra_mappa(citta, 1) # 1 = Mappa Isola Ecologica
+                    else:
+                        st.warning("Per favore, seleziona una città per ottenere la mappa.")
+
+                # Note dell'esperto
+                if dati.get('note'):
+                    st.markdown("---")
+                    show_custom_box("Nota dell'esperto", dati['note'], "#e8f5e9", "#1b5e20", "💡", is_small=True)
+
+                # --- CHATBOT ---
                 st.markdown("---")
                 st.subheader("💬 Hai dubbi? Chiedi all'esperto!")
                 
@@ -254,27 +222,18 @@ if api_key:
                     st.session_state.chat_history = []
 
                 # Mostra la storia della chat
-                for message in st.session_state.chat_history:
-                    with st.chat_message(message["role"]):
-                        st.markdown(message["content"])
-
-                # Input utente
+                for msg in st.session_state.chat_history:
+                    st.chat_message(msg["role"]).markdown(msg["content"])
                 if prompt := st.chat_input("Es. Devo staccare l'etichetta?"):
-                    # 1. Aggiungi messaggio utente alla storia
                     st.session_state.chat_history.append({"role": "user", "content": prompt})
-                    with st.chat_message("user"):
-                        st.markdown(prompt)
+                    st.chat_message("user").markdown(prompt)
 
-                    # 2. Genera risposta AI
                     with st.chat_message("assistant"):
-                        with st.spinner("Sto pensando..."):
-                            bot_reply = ai_engine.get_chatbot_response(prompt, dati_rifiuto, api_key)
-                            st.markdown(bot_reply)
+                        with st.spinner("..."):
+                            reply = ai_engine.get_chatbot_response(prompt, dati, api_key)
+                            st.markdown(reply)
                     
-                    # 3. Aggiungi risposta AI alla storia
-                    st.session_state.chat_history.append({"role": "assistant", "content": bot_reply})
+                    st.session_state.chat_history.append({"role": "assistant", "content": reply})
 
-
-# --- Footer ---
 st.markdown("---")
 st.caption("Powered by Google Gemini & Streamlit")
