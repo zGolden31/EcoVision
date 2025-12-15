@@ -42,7 +42,7 @@ def analizza_immagine(image, api_key, citta):
             # Configura lo schema della risposta usando il modulo "types"
             # Forziamo il tipo MIME JSON per ottenere un output strutturato
             config = types.GenerateContentConfig(
-                response_mime_type="application/json"
+                response_mime_type="application/json",
                 temperature = 0.2 # Temperatura bassa per risultati più deterministici e meno creativi
             )
 
@@ -101,29 +101,30 @@ def analizza_immagine(image, api_key, citta):
 
 def get_chatbot_response(user_query, context_data, api_key):
     """
-    Genera una risposta del chatbot basata sui dati dell'analisi precedente.
+    Genera una risposta della chat basata sul contesto dell'analisi precedente.
     """
+    client = _get_client(api_key)
+    
     try:
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('models/gemini-2.0-flash-lite') # Usiamo un modello veloce per la chat
-        
-        # Creiamo un contesto stringa dai dati JSON
+        # Convertiamo i dati del contesto in stringa
         context_str = json.dumps(context_data, ensure_ascii=False, indent=2)
         
         prompt = f"""
-        Sei un assistente esperto di riciclo. L'utente ha appena analizzato un rifiuto con EcoVision.
-        Ecco i dati dell'analisi che hai appena fornito all'utente:
+        Sei un assistente esperto di riciclo.
+        Dati dell'analisi:
         {context_str}
 
-        L'utente ora ti pone questa domanda: "{user_query}"
+        Domanda utente: "{user_query}"
 
-        Rispondi in modo gentile, diretto e utile. 
-        Riferisciti all'oggetto analizzato se pertinente.
-        Se la domanda non c'entra nulla col riciclo o con l'oggetto, rispondi educatamente che ti occupi solo di rifiuti.
-        Mantieni le risposte concise.
+        Rispondi in modo gentile e conciso. Riferisciti all'oggetto analizzato se pertinente.
         """
 
-        response = model.generate_content(prompt)
+        # Generiamo una risposta testuale semplice
+        response = client.models.generate_content(
+            model=CHAT_MODEL_ID,
+            contents=prompt
+        )
         return response.text
+
     except Exception as e:
         return f"Mi dispiace, c'è stato un problema nel generare la risposta: {e}"
