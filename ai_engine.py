@@ -55,4 +55,31 @@ def analizza_immagine(image, api_key, citta):
     except Exception as e:
         raise e
 
-    
+def get_chatbot_response(user_query, context_data, api_key):
+    """
+    Genera una risposta del chatbot basata sui dati dell'analisi precedente.
+    """
+    try:
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('models/gemini-2.0-flash-lite') # Usiamo un modello veloce per la chat
+        
+        # Creiamo un contesto stringa dai dati JSON
+        context_str = json.dumps(context_data, ensure_ascii=False, indent=2)
+        
+        prompt = f"""
+        Sei un assistente esperto di riciclo. L'utente ha appena analizzato un rifiuto con EcoVision.
+        Ecco i dati dell'analisi che hai appena fornito all'utente:
+        {context_str}
+
+        L'utente ora ti pone questa domanda: "{user_query}"
+
+        Rispondi in modo gentile, diretto e utile. 
+        Riferisciti all'oggetto analizzato se pertinente.
+        Se la domanda non c'entra nulla col riciclo o con l'oggetto, rispondi educatamente che ti occupi solo di rifiuti.
+        Mantieni le risposte concise.
+        """
+
+        response = model.generate_content(prompt)
+        return response.text
+    except Exception as e:
+        return f"Mi dispiace, c'è stato un problema nel generare la risposta: {e}"
