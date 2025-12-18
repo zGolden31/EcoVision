@@ -38,7 +38,7 @@ def show_custom_box(label, text, bg_color, text_color="black", icon="", is_small
     st.markdown(f"""
     <div style="background-color: {bg_color}; padding: {padding}; border-radius: 10px; margin-bottom: 10px; color: {text_color};">
         <{title_tag} style="margin:0; color: {text_color}; font-weight: bold;">{icon} {label}</{title_tag}>
-        <{text_tag} style="margin:0; color: {text_color}; font-size: {'1.1em' if is_small else 'inherit'};">{text}</{text_tag}>
+        <{text_tag} style="margin:0; color: {text_color}; font-size: {'1.1em' if is_small else '1.3em'}; text-align: center;">{text}</{text_tag}>
     </div>
     """, unsafe_allow_html=True)
 
@@ -203,7 +203,7 @@ if api_key:
                         with c1:
                             show_custom_box(label, dest_display, stile["bg"], stile["text"], "🗑️")
                         with c2:
-                            st.image(stile["icon"], width=100)
+                            st.image(stile["icon"], width=120)
                 # Mappa isola ecologia (fuori dal for loop)
                 if flag_rifiuto_speciale:
                     st.warning("⚠️ Questo oggetto richiede smaltimento speciale.")
