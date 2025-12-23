@@ -4,6 +4,7 @@ import config                    # Configurazioni della pagina
 from geo_loader import carica_dati_geografici, get_city_from_latlon_italian, disattiva_gps, disattiva_selezioneman  # Funzioni di caricamento dati geografici
 import ai_engine                    # Funzioni di analisi e risposta AI
 from streamlit_js_eval import get_geolocation  # Per ottenere la geolocalizzazione dell'utente
+import os
 
 # --- CONFIFGURAZIONE PAGINA ---
 config.configura_pagina()
@@ -121,9 +122,23 @@ st.markdown("---")
 
 
 # --- GESTIONE SICUREZZA E AUTENTICAZIONE API KEY ---
-api_key = st.secrets.get("GOOGLE_API_KEY")
+# --- GESTIONE SICUREZZA E AUTENTICAZIONE API KEY ---
+api_key = None
+
+try:
+    # Tenta di leggere dai secrets di Streamlit
+    api_key = st.secrets.get("GOOGLE_API_KEY")
+except Exception:
+    # Se i secrets non esistono, non fare nulla e passa oltre
+    pass
+
+# Se non trovata nei secrets, cerca nelle variabili d'ambiente (Docker)
 if not api_key:
-    st.warning("Chiave API non trovata.")
+    api_key = os.environ.get("GOOGLE_API_KEY")
+
+# Se ancora manca, chiedi l'inserimento manuale nell'interfaccia
+if not api_key:
+    st.warning("Chiave API non trovata nel sistema.")
     api_key = st.text_input("Inserisci manualmente la tua Google API Key:", type="password")
 
 # --- LOGICA DI INPUT E ANALISI ---
