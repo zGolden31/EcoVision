@@ -62,8 +62,11 @@ def mostra_mappa(citta, tipo_mappa=0):
         )
 
 # INTESTAZIONE E UI PRINCIPALE
-st.image("./icons/logo_ecovision_highres.png", width=150)
-st.title("EcoVision: dove si butta?")
+col1, col2 = st.columns([3, 17])
+with col1:
+    st.image("./icons/logo_ecovision_highres.png", width=150)
+with col2:
+    st.header("EcoVision: la tua visione sul riciclo")
 st.markdown("""
 Carica una foto di un rifiuto o scattala direttamente. 
 L'Intelligenza Artificiale ti dirà **cos'è**, **se devi pulirlo** e **in quale bidone va buttato**.
